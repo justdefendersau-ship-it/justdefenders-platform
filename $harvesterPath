@@ -1,0 +1,68 @@
+# ============================================
+# File: C:\dev\justdefenders\bootstrap.ps1
+# Timestamp: 06-04-2026 07:32
+# JustDefenders ©
+# ============================================
+
+Write-Host "=== JustDefenders Bootstrap ==="
+
+$projectRoot = "C:\dev\justdefenders"
+
+# Create folders
+$folders = @(
+    "$projectRoot\scripts",
+    "$projectRoot\backend",
+    "$projectRoot\data",
+    "$projectRoot\logs"
+)
+
+foreach ($folder in $folders) {
+    if (!(Test-Path $folder)) {
+        New-Item -ItemType Directory -Path $folder | Out-Null
+        Write-Host "Created: $folder"
+    }
+}
+
+# Create harvester
+$harvesterPath = "$projectRoot\backend\harvester.cjs"
+
+@"
+const fs = require("fs");
+const path = require("path");
+
+const HISTORY_FILE = path.join(__dirname, "../data/price_history.json");
+const LOG_FILE = path.join(__dirname, "../logs/systemLogs.log");
+
+function log(message) {
+    fs.appendFileSync(LOG_FILE, new Date().toISOString() + " - " + message + "\n");
+}
+
+function run() {
+    log("Harvester started");
+
+    const sample = [
+        { partNumber: "LR1234", supplier: "Repco", price: 120 },
+        { partNumber: "LR1234", supplier: "Britpart", price: 130 }
+    ];
+
+    let history = [];
+
+    if (fs.existsSync(HISTORY_FILE)) {
+        history = JSON.parse(fs.readFileSync(HISTORY_FILE, "utf8"));
+    }
+
+    const timestamp = new Date().toISOString();
+
+    const newEntries = sample.map(p => ({
+        ...p,
+        timestamp
+    }));
+
+    const updated = [...history, ...newEntries];
+
+    fs.writeFileSync(HISTORY_FILE, JSON.stringify(updated, null, 2));
+
+    log("Harvester completed successfully");
+}
+
+run();

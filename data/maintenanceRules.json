@@ -1,0 +1,10 @@
+﻿{
+  "Defender Puma 2.2": {
+    "serviceKit": ["LR032644", "ERR5009", "LR009705"],
+    "intervalKm": 10000
+  },
+  "Defender Td5": {
+    "serviceKit": ["ERR5009", "ESR4238"],
+    "intervalKm": 10000
+  }
+}

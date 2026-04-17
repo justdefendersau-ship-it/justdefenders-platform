@@ -1,0 +1,40 @@
+{
+  "LR032644": {
+    "partNumber": "LR032644",
+    "type": "OEM_NEW",
+    "suppliers": {
+      "Britpart": {
+        "avg": 121,
+        "min": 20,
+        "max": 219,
+        "last": 163
+      },
+      "Repco": {
+        "avg": 120,
+        "min": 20,
+        "max": 219,
+        "last": 168
+      }
+    },
+    "image": "https://via.placeholder.com/150?text=LR032644"
+  },
+  "NRC9448": {
+    "partNumber": "NRC9448",
+    "type": "OEM_CLASSIC",
+    "suppliers": {
+      "Repco": {
+        "avg": 119,
+        "min": 20,
+        "max": 219,
+        "last": 175
+      },
+      "Britpart": {
+        "avg": 120,
+        "min": 20,
+        "max": 219,
+        "last": 213
+      }
+    },
+    "image": "https://via.placeholder.com/150?text=NRC9448"
+  }
+}

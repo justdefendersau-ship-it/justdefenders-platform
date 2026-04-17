@@ -1,0 +1,50 @@
+{
+  "LR032644": {
+    "Britpart": {
+      "current": 40,
+      "predicted": 128,
+      "trend": 88,
+      "supplierScore": -218.04582147396442,
+      "decision": "BUY NOW"
+    },
+    "Repco": {
+      "current": 133,
+      "predicted": 177,
+      "trend": 44,
+      "supplierScore": -218.1294303692032,
+      "decision": "BUY NOW"
+    }
+  },
+  "ERR5009": {
+    "Repco": {
+      "current": 217,
+      "predicted": 144,
+      "trend": -73,
+      "supplierScore": -218.1294303692032,
+      "decision": "WAIT"
+    },
+    "Britpart": {
+      "current": 153,
+      "predicted": 135,
+      "trend": -18,
+      "supplierScore": -218.04582147396442,
+      "decision": "WAIT"
+    }
+  },
+  "NRC9448": {
+    "Repco": {
+      "current": 175,
+      "predicted": 117,
+      "trend": -58,
+      "supplierScore": -218.1294303692032,
+      "decision": "WAIT"
+    },
+    "Britpart": {
+      "current": 204,
+      "predicted": 81,
+      "trend": -123,
+      "supplierScore": -218.04582147396442,
+      "decision": "WAIT"
+    }
+  }
+}

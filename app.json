@@ -1,0 +1,12 @@
+// JustDefenders ©
+// File: /mobile-app/app.json
+// Timestamp: 30 March 2026 12:05
+
+{
+  "expo": {
+    "name": "JustDefenders",
+    "slug": "justdefenders",
+    "scheme": "justdefenders",
+    "version": "1.0.0"
+  }
+}

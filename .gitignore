@@ -1,0 +1,13 @@
+﻿# ENV / SECRETS
+.env
+.env.*
+*.env
+gmail-token.json
+gmail-credentials.json
+
+# BUILD
+.next
+node_modules
+
+# LOGS
+*.log

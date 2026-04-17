@@ -1,0 +1,97 @@
+"use client";
+
+import { useState } from "react";
+
+export default function Dashboard() {
+
+  const [vin, setVin] = useState("");
+  const [query, setQuery] = useState("");
+  const [data, setData] = useState<any>(null);
+
+  async function search() {
+    const res = await fetch(`/api/parts?vin=${vin}&q=${query}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  return (
+    <div style={{padding:20, background:"#f3f4f6", minHeight:"100vh"}}>
+
+      <h1>JustDefenders Command Centre</h1>
+
+      {/* SEARCH */}
+      <div style={{marginBottom:20}}>
+        <input
+          placeholder="Enter VIN"
+          value={vin}
+          onChange={(e)=>setVin(e.target.value.toUpperCase())}
+          style={{padding:6, marginRight:10}}
+        />
+
+        <input
+          placeholder="Search parts"
+          value={query}
+          onChange={(e)=>setQuery(e.target.value)}
+          style={{padding:6, marginRight:10}}
+        />
+
+        <button onClick={search}>Search</button>
+      </div>
+
+      {/* RESULTS */}
+      <div>
+
+        {data?.results?.map((s:any, i:number) => {
+
+          const items = (s.items && s.items.length > 0) ? s.items : [s];
+
+          return (
+            <div key={i} style={{
+              marginBottom:20,
+              padding:10,
+              background:"#fff",
+              borderRadius:8
+            }}>
+
+              <div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+                <strong>{s.supplier}</strong>
+
+                {s.bestOption && (
+                  <span style={{
+                    background:"#16a34a",
+                    color:"#fff",
+                    padding:"4px 8px",
+                    borderRadius:6,
+                    fontSize:12
+                  }}>
+                    ⭐ BEST OPTION
+                  </span>
+                )}
+              </div>
+
+              <div style={{fontSize:12, marginTop:4}}>
+                🧠 Reliability: {s.reliability?.toFixed(2)} |
+                📊 Decision Score: {s.score?.toFixed(2)} |
+                🚚 {s.avgDelivery} days
+              </div>
+
+              {items.map((it:any, j:number) => (
+                <div key={j} style={{
+                  display:"flex",
+                  justifyContent:"space-between",
+                  marginTop:6
+                }}>
+                  <span>{it.partNumber}</span>
+                  <span>${it.price}</span>
+                </div>
+              ))}
+
+            </div>
+          );
+        })}
+
+      </div>
+
+    </div>
+  );
+}

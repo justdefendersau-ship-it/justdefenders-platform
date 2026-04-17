@@ -1,0 +1,32 @@
+<!--
+JustDefenders ©
+Defender Map Marker – Correct Orientation
+
+File: public/defender-marker.svg
+Timestamp: 15 March 2026 15:32
+-->
+
+<svg xmlns="http://www.w3.org/2000/svg"
+     width="64"
+     height="64"
+     viewBox="0 0 64 64"
+     fill="none">
+
+  <!-- body -->
+  <rect x="16" y="30" width="32" height="10" rx="3" fill="#22c55e"/>
+
+  <!-- roof -->
+  <rect x="24" y="24" width="16" height="8" rx="2" fill="#22c55e"/>
+
+  <!-- bonnet -->
+  <rect x="48" y="32" width="6" height="6" rx="1" fill="#22c55e"/>
+
+  <!-- windows -->
+  <rect x="26" y="26" width="5" height="4" fill="#0f172a"/>
+  <rect x="32" y="26" width="5" height="4" fill="#0f172a"/>
+
+  <!-- wheels -->
+  <circle cx="26" cy="42" r="3.5" fill="#111827"/>
+  <circle cx="44" cy="42" r="3.5" fill="#111827"/>
+
+</svg>

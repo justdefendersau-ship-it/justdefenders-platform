@@ -1,0 +1,9 @@
+﻿{
+  "weights": {
+    "price": 1.0,
+    "delivery": 1.0,
+    "warranty": 1.0,
+    "trust": 1.0
+  },
+  "learningRate": 0.05
+}

@@ -1,0 +1,50 @@
+[
+  {
+    "name": "4WD Industries",
+    "website": "https://4wdindustries.com.au",
+    "location": "NSW",
+    "type": "aftermarket"
+  },
+  {
+    "name": "British Auto Parts",
+    "website": "https://britishautoparts.com.au",
+    "location": "VIC",
+    "type": "OEM"
+  },
+  {
+    "name": "British Motor Imports",
+    "website": "https://britishmotorimports.com.au",
+    "location": "NSW",
+    "type": "OEM"
+  },
+  {
+    "name": "British Off Road",
+    "website": "https://britishoffroad.com",
+    "location": "QLD",
+    "type": "aftermarket"
+  },
+  {
+    "name": "Landybitz",
+    "website": "https://landybitz.com.au",
+    "location": "QLD",
+    "type": "aftermarket"
+  },
+  {
+    "name": "LR Partshop",
+    "website": "https://lrpartshop.com.au",
+    "location": "AU",
+    "type": "OEM"
+  },
+  {
+    "name": "Rovacraft",
+    "website": "https://rovacraft.com.au",
+    "location": "AU",
+    "type": "OEM"
+  },
+  {
+    "name": "TR Spares",
+    "website": "https://trspares.com.au",
+    "location": "NSW",
+    "type": "aftermarket"
+  }
+]

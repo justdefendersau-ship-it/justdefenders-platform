@@ -1,0 +1,13 @@
+{
+  "API": "RUNNING",
+  "Crawler": "RUNNING",
+  "Harvester": "RUNNING",
+  "Cleanup": "RUNNING",
+  "Storage": "RUNNING",
+  "Anomaly": "RUNNING",
+  "Ranking": "RUNNING",
+  "Predict": "RUNNING",
+  "Recommend": "RUNNING",
+  "OEM": "RUNNING",
+  "Email": "RUNNING"
+}

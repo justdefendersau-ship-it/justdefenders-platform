@@ -1,0 +1,8 @@
+﻿{
+  "activeBrand": "defender",
+  "supportedBrands": ["defender"],
+  "featureFreeze": true,
+  "environment": "production",
+  "monetisationEnabled": true,
+  "betaAccessRequired": false
+}

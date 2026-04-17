@@ -1,0 +1,6 @@
+﻿{
+  "free": ["search"],
+  "member": ["search", "build", "invoice"],
+  "premium": ["all"],
+  "admin": ["all", "admin"]
+}

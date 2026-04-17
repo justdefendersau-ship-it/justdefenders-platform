@@ -1,0 +1,36 @@
+{
+  "A9774435": [
+    {
+      "timestamp": "2026-04-09T02:07:54.908Z",
+      "suppliers": []
+    },
+    {
+      "timestamp": "2026-04-09T05:46:26.579Z",
+      "suppliers": []
+    },
+    {
+      "timestamp": "2026-04-09T07:13:27.657Z",
+      "suppliers": [
+        {
+          "partNumber": "A9774435",
+          "supplier": "All Four x 4 Spares",
+          "region": "AU",
+          "price_aud": 99,
+          "delivery_days": 2,
+          "availability": "in_stock",
+          "source": "AU_SMART"
+        }
+      ]
+    }
+  ],
+  "err5099": [
+    {
+      "timestamp": "2026-04-09T03:10:31.401Z",
+      "suppliers": []
+    },
+    {
+      "timestamp": "2026-04-09T03:10:31.920Z",
+      "suppliers": []
+    }
+  ]
+}

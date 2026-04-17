@@ -1,0 +1,12 @@
+﻿{
+  "Repco": {
+    "priority": 1,
+    "discountRate": 0.1,
+    "preferred": true
+  },
+  "Britpart": {
+    "priority": 2,
+    "discountRate": 0.05,
+    "preferred": false
+  }
+}
