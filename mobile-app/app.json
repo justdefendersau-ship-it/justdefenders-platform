@@ -1,0 +1,25 @@
+{
+  "expo": {
+    "name": "JustDefenders",
+    "slug": "justdefenders",
+    "scheme": "justdefenders",
+    "version": "1.0.0",
+    "extra": {
+      "supabaseUrl": "https://mpfvggikijgwmnpmpchm.supabase.co",
+      "supabaseAnonKey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1wZnZnZ2lraWpnd21ucG1wY2htIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzExOTU3ODMsImV4cCI6MjA4Njc3MTc4M30.aal2_FZb8fPYAoWYzeh2eH23IZlHDRVKEvfCrJy7usM",
+      "eas": {
+        "projectId": "1761566d-7684-4d11-81ff-1a0e3dd6b8fd"
+      }
+    },
+    "owner": "defenderintelligence",
+    "ios": {
+      "bundleIdentifier": "com.defenderintelligence.justdefenders",
+      "infoPlist": {
+        "ITSAppUsesNonExemptEncryption": false
+      }
+    },
+    "android": {
+      "package": "com.defenderintelligence.justdefenders"
+    }
+  }
+}
