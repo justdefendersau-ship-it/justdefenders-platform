@@ -1,0 +1,153 @@
+import { NextResponse } from "next/server";
+import { getCompatibleParts, getUpgrades } from "../../../lib/compatibility";
+import { fetchAllSuppliers } from "../../../lib/suppliers";
+
+
+const memberDiscounts:any = {
+  "Repco": 0.12,
+  "Supercheap Auto": 0.10,
+  "Burson": 0.08,
+  "4WD Industries": 0.05,
+  "Landybitz": 0.07
+};
+
+
+function calculateScore(item:any, minPrice:number, maxDistance:number) {
+
+  const price = item.memberPrice || item.price;
+  const priceScore = (1 / price) * 10000;
+
+  const distance = item.distance || maxDistance;
+  const distanceScore = maxDistance > 0 ? ((maxDistance - distance) / maxDistance) * 100 : 0;
+
+  const speedScore = item.deliveryDays ? (10 - item.deliveryDays) * 5 : 0;
+
+  const discountBonus = item.memberPrice ? 20 : 0;
+
+  return Math.round(priceScore + distanceScore + speedScore + discountBonus);
+}
+
+export async function GET(req: Request) {
+
+  const { searchParams } = new URL(req.url);
+
+  const query = searchParams.get("q") || "";
+  const vin = searchParams.get("vin") || "";
+
+  // ----------------------------------------------------------------------------------
+  // MOCK RESULTS (your existing working structure)
+  // ----------------------------------------------------------------------------------
+
+  const externalResults = await fetchAllSuppliers(query);
+
+const results = [
+  ...externalResults,
+  // keep your internal suppliers too
+];
+
+  // ----------------------------------------------------------------------------------
+  // SUPPLIER INTELLIGENCE (FORCED ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡Ãƒâ€šÃ‚Â¬ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â NO DEPENDENCIES)
+  // ----------------------------------------------------------------------------------
+
+  const supplierData:any = {
+    "4WD Industries": {
+      type: "hybrid",
+      location: { lat: -32.9283, lng: 151.7817 }
+    },
+    "Landybitz": {
+      type: "hybrid",
+      location: { lat: -27.9830, lng: 153.3500 }
+    },
+    "British Auto Parts": {
+      type: "hybrid",
+      location: { lat: -37.8220, lng: 145.2720 }
+    },
+    "LR Partshop": {
+      type: "hybrid",
+      location: null
+    }
+  };
+
+  // ----------------------------------------------------------------------------------
+  // ENRICH RESULTS
+  // ----------------------------------------------------------------------------------
+
+  const enriched = results.map(r => {
+
+  const discount = memberDiscounts[r.supplier];
+
+  let memberPrice = null;
+
+  if (discount) {
+    memberPrice = Math.round(r.price * (1 - discount));
+  }
+
+  return {
+    ...r,
+    memberPrice
+  };
+});
+
+  
+const prices = enriched.map((r:any) => r.memberPrice || r.price);
+const minPrice = Math.min(...prices);
+
+const maxDistance = Math.max(...enriched.map((r:any) => r.distance || 0), 1);
+
+// Calculate score
+const scored = enriched.map((r:any) => {
+  const distance = r.location ? 100 : 500; // fallback until real distance passed in
+  const score = calculateScore({...r, distance}, minPrice, maxDistance);
+
+  return {
+    ...r,
+    score,
+    distance
+  };
+});
+
+// Determine labels
+const bestScore = Math.max(...scored.map((r:any) => r.score));
+const cheapest = Math.min(...scored.map((r:any) => r.memberPrice || r.price));
+
+const final = scored.map((r:any) => {
+
+  let label = null;
+
+  if (r.score === bestScore) label = "BEST VALUE";
+  else if ((r.memberPrice || r.price) === cheapest) label = "CHEAPEST";
+  else if (r.deliveryDays && r.deliveryDays <= 2) label = "FASTEST";
+
+  return {
+    ...r,
+    label
+  };
+});
+
+const extended = final.flatMap((r:any) => {
+
+  const compatible = getCompatibleParts(r.partNumber).map((c:any) => ({
+    supplier: c.brand,
+    partNumber: c.partNumber,
+    price: Math.round(r.price * 0.9),
+    type: "compatible",
+    original: r.partNumber
+  }));
+
+  const upgrades = getUpgrades(r.partNumber).map((u:any) => ({
+    supplier: u.brand,
+    partNumber: u.partNumber,
+    price: Math.round(r.price * 1.4),
+    type: "upgrade",
+    note: u.note
+  }));
+
+  return [r, ...compatible, ...upgrades];
+});
+
+return NextResponse.json({
+  query,
+  vin,
+  results: extended
+});
+}

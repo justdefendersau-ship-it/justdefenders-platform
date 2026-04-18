@@ -1,0 +1,78 @@
+import { NextResponse } from "next/server";
+
+
+const memberDiscounts:any = {
+  "Repco": 0.12,
+  "Supercheap Auto": 0.10,
+  "Burson": 0.08,
+  "4WD Industries": 0.05,
+  "Landybitz": 0.07
+};
+
+export async function GET(req: Request) {
+
+  const { searchParams } = new URL(req.url);
+
+  const query = searchParams.get("q") || "";
+  const vin = searchParams.get("vin") || "";
+
+  // ----------------------------------------------------------------------------------
+  // MOCK RESULTS (your existing working structure)
+  // ----------------------------------------------------------------------------------
+
+  const results = [
+    { supplier: "4WD Industries", partNumber: "LR123", price: 280 },
+    { supplier: "Landybitz", partNumber: "LR123", price: 320 },
+    { supplier: "British Auto Parts", partNumber: "LR123", price: 290 },
+    { supplier: "LR Partshop", partNumber: "LR123", price: 330 }
+  ];
+
+  // ----------------------------------------------------------------------------------
+  // SUPPLIER INTELLIGENCE (FORCED â€” NO DEPENDENCIES)
+  // ----------------------------------------------------------------------------------
+
+  const supplierData:any = {
+    "4WD Industries": {
+      type: "hybrid",
+      location: { lat: -32.9283, lng: 151.7817 }
+    },
+    "Landybitz": {
+      type: "hybrid",
+      location: { lat: -27.9830, lng: 153.3500 }
+    },
+    "British Auto Parts": {
+      type: "hybrid",
+      location: { lat: -37.8220, lng: 145.2720 }
+    },
+    "LR Partshop": {
+      type: "hybrid",
+      location: null
+    }
+  };
+
+  // ----------------------------------------------------------------------------------
+  // ENRICH RESULTS
+  // ----------------------------------------------------------------------------------
+
+  const enriched = results.map(r => {
+
+  const discount = memberDiscounts[r.supplier];
+
+  let memberPrice = null;
+
+  if (discount) {
+    memberPrice = Math.round(r.price * (1 - discount));
+  }
+
+  return {
+    ...r,
+    memberPrice
+  };
+});
+
+  return NextResponse.json({
+    query,
+    vin,
+    results: enriched
+  });
+}

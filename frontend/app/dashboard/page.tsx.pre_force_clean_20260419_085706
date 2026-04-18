@@ -49,7 +49,7 @@ export default function Dashboard() {
           marginBottom: "25px",
           boxShadow: "0 10px 30px rgba(0,0,0,0.4)"
         }}>
-          JustDefenders Ãƒâ€šÃ‚Â© Command Centre
+          JustDefenders Ã‚Â© Command Centre
         </div>
 
         {/* CONTROL PANEL */}
@@ -111,7 +111,7 @@ export default function Dashboard() {
         fontWeight:900
       }}
     >
-      ÃƒÂ¯Ã‚Â¿Ã‚Â½-
+      Ã¯Â¿Â½-
     </span>
   </span>
 ))}

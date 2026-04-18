@@ -8,10 +8,10 @@ export async function GET(req: Request) {
   const vin = searchParams.get("vin") || "";
 
   // ----------------------------------------------------------------------------------
-  // BASE SUPPLIERS
+  // BASE SUPPLIERS (WORKING DATA)
   // ----------------------------------------------------------------------------------
 
-  const base = [
+  const results = [
     {
       supplier: "4WD Industries",
       partNumber: "LR123",
@@ -55,9 +55,14 @@ export async function GET(req: Request) {
     "Landybitz": 0.07
   };
 
-  const enriched = base.map(r => {
+  const enriched = results.map(r => {
+
     const discount = memberDiscounts[r.supplier];
-    const memberPrice = discount ? Math.round(r.price * (1 - discount)) : null;
+    let memberPrice = null;
+
+    if (discount) {
+      memberPrice = Math.round(r.price * (1 - discount));
+    }
 
     return {
       ...r,
@@ -70,9 +75,12 @@ export async function GET(req: Request) {
   // ----------------------------------------------------------------------------------
 
   function calculateScore(item:any) {
+
     const price = item.memberPrice || item.price;
     const priceScore = (1 / price) * 10000;
+
     const speedScore = item.deliveryDays ? (10 - item.deliveryDays) * 5 : 0;
+
     const discountBonus = item.memberPrice ? 20 : 0;
 
     return Math.round(priceScore + speedScore + discountBonus);
@@ -100,34 +108,43 @@ export async function GET(req: Request) {
     };
   });
 
-  // ----------------------------------------------------------------------------------
-  // GROUPED COMPATIBILITY
-  // ----------------------------------------------------------------------------------
+  
 
-  const grouped = final.map(r => {
+const grouped = final.map((r:any) => {
 
-    const compatible = getCompatibleParts(r.partNumber).map(c => ({
-      ...c,
-      price: Math.round(r.price * 0.9),
-      type: "compatible"
-    }));
+  const compatible = getCompatibleParts(r.partNumber).map((c:any) => ({
+    ...c,
+    price: Math.round(r.price * 0.9),
+    type: "compatible"
+  }));
 
-    const upgrades = getUpgrades(r.partNumber).map(u => ({
-      ...u,
-      price: Math.round(r.price * 1.4),
-      type: "upgrade"
-    }));
+  const upgrades = getUpgrades(r.partNumber).map((u:any) => ({
+    ...u,
+    price: Math.round(r.price * 1.4),
+    type: "upgrade"
+  }));
 
-    return {
-      ...r,
-      compatible,
-      upgrades
-    };
-  });
+  return {
+    ...r,
+    compatible,
+    upgrades
+  };
+});
 
-  return NextResponse.json({
-    query,
-    vin,
-    results: grouped
-  });
+
+  const upgrades = getUpgrades(r.partNumber).map((u:any) => ({
+    ...u,
+    price: Math.round(r.price * 1.4),
+    type: "upgrade",
+    baseSupplier: r.supplier
+  }));
+
+  return [r, ...compatible, ...upgrades];
+});
+
+return NextResponse.json({
+  query,
+  vin,
+  results: grouped
+});
 }

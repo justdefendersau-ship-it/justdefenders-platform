@@ -1,0 +1,211 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [vin, setVin] = useState("");
+  const [vinList, setVinList] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState("");
+  const [query, setQuery] = useState("");
+  const [data, setData] = useState<any>(null);
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+  const [userLocation, setUserLocation] = useState<any>(null);
+
+  // ADD VIN
+  function addVin() {
+    if (vin && !vinList.includes(vin)) {
+      const updated = [...vinList, vin];
+      setVinList(updated);
+      if (!activeVin) setActiveVin(vin);
+      setVin("");
+    }
+  }
+
+  function removeVin(v:string) {
+    const updated = vinList.filter(x => x !== v);
+    setVinList(updated);
+    if (activeVin === v) setActiveVin(updated[0] || "");
+  }
+
+  // FETCH
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}&vin=${activeVin}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => { search(); }, [activeVin]);
+
+  // GEO
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      })
+    );
+  }, []);
+
+  // DISTANCE
+  function getDistance(lat1:number, lon1:number, lat2:number, lon2:number) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat/2)**2 +
+      Math.cos(lat1 * Math.PI/180) *
+      Math.cos(lat2 * Math.PI/180) *
+      Math.sin(dLon/2)**2;
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  }
+
+  function renderType(s:any) {
+    if (s.type === "physical") return <span style={{color:"#16a34a"}}>ðŸ§± Physical</span>;
+    if (s.type === "hybrid") return <span style={{color:"#2563eb"}}>ðŸ”· Hybrid</span>;
+    return <span style={{color:"#6b7280"}}>ðŸŒ Online</span>;
+  }
+
+  return (
+    <div style={{background:"#e5e7eb", minHeight:"100vh", padding:"25px"}}>
+
+      {/* MAIN PANEL */}
+      <div style={{
+        background:"#ffffff",
+        borderRadius:"14px",
+        boxShadow:"0 10px 25px rgba(0,0,0,0.12)",
+        padding:"25px"
+      }}>
+
+        {/* HEADER INSIDE PANEL */}
+        <div style={{
+          fontSize:"24px",
+          fontWeight:800,
+          color:"#6b7280",
+          marginBottom:"20px",
+          textShadow:"1px 1px 2px rgba(0,0,0,0.2)"
+        }}>
+          JustDefenders Â© Command Centre
+        </div>
+
+        {/* VIN INPUT */}
+        <div style={{marginBottom:"10px"}}>
+          <input
+            placeholder="Enter VIN"
+            value={vin}
+            onChange={(e)=>setVin(e.target.value.toUpperCase())}
+            style={{padding:"8px", marginRight:"10px"}}
+          />
+          <button
+            onClick={addVin}
+            style={{
+              padding:"8px 12px",
+              background:"#16a34a",
+              color:"#fff",
+              border:"none",
+              borderRadius:"6px"
+            }}
+          >
+            Add
+          </button>
+        </div>
+
+        {/* VIN BAR */}
+        <div style={{
+          display:"flex",
+          gap:"10px",
+          flexWrap:"wrap",
+          marginBottom:"15px"
+        }}>
+          {vinList.map(v=>(
+            <div key={v} style={{
+              padding:"6px 10px",
+              borderRadius:"20px",
+              background: v === activeVin ? "#16a34a" : "#e5e7eb",
+              color: v === activeVin ? "#fff" : "#111",
+              cursor:"pointer"
+            }}>
+              <span onClick={()=>setActiveVin(v)}>{v}</span>
+              <span
+                onClick={()=>removeVin(v)}
+                style={{marginLeft:"8px", color:"red", cursor:"pointer"}}
+              >
+                âœ–
+              </span>
+            </div>
+          ))}
+        </div>
+
+        {/* SEARCH */}
+        <div style={{marginBottom:"15px"}}>
+          <input
+            placeholder="Search parts..."
+            value={query}
+            onChange={(e)=>setQuery(e.target.value)}
+            style={{padding:"8px", marginRight:"10px", width:"300px"}}
+          />
+          <button
+            onClick={search}
+            style={{
+              padding:"8px 14px",
+              background:"#2563eb",
+              color:"#fff",
+              border:"none",
+              borderRadius:"6px"
+            }}
+          >
+            Search
+          </button>
+        </div>
+
+        {/* FILTERS */}
+        <div style={{marginBottom:"20px", color:"#111827", fontWeight:500}}>
+          <label style={{marginRight:"20px"}}>
+            <input type="checkbox" checked={domestic} onChange={()=>setDomestic(!domestic)} />
+            <span style={{marginLeft:"5px"}}>Domestic only</span>
+          </label>
+
+          <label>
+            <input type="checkbox" checked={used} onChange={()=>setUsed(!used)} />
+            <span style={{marginLeft:"5px"}}>Include used parts</span>
+          </label>
+        </div>
+
+        {/* RESULTS */}
+        {data?.results?.map((s:any,i:number)=>(
+          <div key={i} style={{
+            background:"#fff",
+            padding:"15px",
+            borderRadius:"12px",
+            boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+            marginBottom:"12px"
+          }}>
+
+            <div style={{display:"flex", justifyContent:"space-between"}}>
+              <strong style={{color:"#111827"}}>{s.supplier}</strong>
+              {renderType(s)}
+            </div>
+
+            {userLocation && s.location && (
+              <div style={{fontSize:"12px", color:"#4b5563"}}>
+                ðŸ“ {getDistance(
+                  userLocation.lat,
+                  userLocation.lng,
+                  s.location.lat,
+                  s.location.lng
+                ).toFixed(1)} km away
+              </div>
+            )}
+
+            <div style={{color:"#111827"}}>{s.partNumber}</div>
+            <div style={{fontWeight:700, color:"#111827"}}>${s.price}</div>
+
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+}

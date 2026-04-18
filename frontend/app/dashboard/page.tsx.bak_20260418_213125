@@ -1,0 +1,212 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+// ======================================================================================
+// SCORING
+// ======================================================================================
+
+function scorePart(p:any) {
+  const price = p.price || 9999;
+  const distance = p.distanceKm || 500;
+
+  return Math.round(price * 0.7 + distance * 0.3);
+}
+
+// ======================================================================================
+// COMPONENT
+// ======================================================================================
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  async function search() {
+    const res = await fetch('/api/parts?q=' + query);
+    const json = await res.json();
+
+    const scored = json.results.map((r:any) => ({
+      ...r,
+      score: scorePart(r)
+    }));
+
+    const minPrice = Math.min(...scored.map((r:any)=>r.price));
+
+    const labelled = scored.map((r:any)=>({
+      ...r,
+      label: r.price === minPrice ? ["CHEAPEST"] : []
+    }));
+
+    setData({results: labelled});
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+    <div style={{background:"#e5e7eb", minHeight:"100vh", padding:"30px"}}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px",
+        borderRadius:"12px",
+        color:"#d1d5db",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px",
+        boxShadow:"0 12px 30px rgba(0,0,0,0.4)"
+      }}>
+        JustDefenders Ãƒâ€šÃ‚Â© Command Centre
+      </div>
+
+      {/* SEARCH PANEL */}
+<div style={{
+  background:"#ffffff",
+  padding:"20px",
+  borderRadius:"12px",
+  marginBottom:"20px",
+  boxShadow:"0 10px 25px rgba(0,0,0,0.08)"
+}}>
+
+  {/* VIN INPUT */}
+  <div style={{marginBottom:"10px"}}>
+    <input
+      placeholder="Enter VIN"
+      value={vinInput}
+      onChange={(e)=>setVinInput(e.target.value.toUpperCase())}
+    />
+
+    <button style={{
+      background:"#16a34a",
+      color:"#fff",
+      padding:"6px 12px",
+      borderRadius:"6px",
+      marginLeft:"8px"
+    }} onClick={()=>{
+      if (!vinInput) return;
+      if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+      setActiveVin(vinInput);
+      setVinInput("");
+    }}>
+      Add
+    </button>
+  </div>
+
+  {/* VIN CHIPS */}
+  <div style={{marginBottom:"10px"}}>
+    {vins.map((v,i)=>(
+      <span key={i}
+        onClick={()=>setActiveVin(v)}
+        style={{
+          marginRight:"8px",
+          padding:"6px 10px",
+          borderRadius:"15px",
+          cursor:"pointer",
+          background: activeVin===v ? "#16a34a" : "#e5e7eb",
+          color: activeVin===v ? "#fff" : "#111827"
+        }}
+      >
+        {v}
+        <span onClick={(e)=>{
+          e.stopPropagation();
+          setVins(vins.filter(x=>x!==v));
+        }} style={{marginLeft:"6px", color:"#ef4444"}}>
+          Ãƒâ€”
+        </span>
+      </span>
+    ))}
+  </div>
+
+  {/* SEARCH */}
+  <input value={query} onChange={(e)=>setQuery(e.target.value)} />
+
+  <button style={{
+    background:"#2563eb",
+    color:"#fff",
+    padding:"8px 16px",
+    borderRadius:"6px",
+    marginLeft:"10px",
+    fontWeight:600
+  }} onClick={search}>
+    Search
+  </button>
+
+  {/* FILTERS */}
+  <div style={{marginTop:"10px", fontWeight:600, color:"#111827"}}>
+
+    <label style={{marginRight:"12px"}}>
+      <input type="checkbox" checked={false} readOnly />
+      OEM
+    </label>
+
+    <label style={{marginRight:"12px"}}>
+      <input type="checkbox" checked={true} readOnly />
+      Compatible
+    </label>
+
+    <label style={{marginRight:"12px"}}>
+      <input type="checkbox" checked={true} readOnly />
+      Upgrades
+    </label>
+
+    <label style={{marginRight:"12px"}}>
+      <input type="checkbox" checked={false} readOnly />
+      International
+    </label>
+
+    <label>
+      <input type="checkbox" checked={false} readOnly />
+      Used
+    </label>
+
+  </div>
+
+</div>
+
+{/* RESULTS */}
+      {data?.results?.map((s:any,i:number)=>(
+        <div key={i} style={{
+          background:"#ffffff",
+          padding:"18px",
+          marginBottom:"16px",
+          borderRadius:"12px",
+          border:"1px solid #e5e7eb",
+          boxShadow:"0 10px 25px rgba(0,0,0,0.08)"
+        }}>
+
+          <div style={{
+            fontSize:"16px",
+            fontWeight:800,
+            color:"#111827"
+          }}>
+            {s.supplier}
+          </div>
+
+          <div style={{
+            marginTop:"6px",
+            color:"#374151",
+            fontWeight:500
+          }}>
+            {s.partNumber}
+          </div>
+
+          <div style={{
+            marginTop:"6px",
+            fontSize:"22px",
+            fontWeight:800,
+            color:"#111827"
+          }}>
+            ${s.price}
+          </div>
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

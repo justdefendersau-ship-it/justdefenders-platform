@@ -1,0 +1,181 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+    <div style={{
+      background:"#e5e7eb",
+      minHeight:"100vh",
+      padding:"30px"
+    }}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px 25px",
+        borderRadius:"12px",
+        color:"#9ca3af",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px",
+        boxShadow:"0 10px 25px rgba(0,0,0,0.35)",
+        letterSpacing:"1px"
+      }}>
+        JustDefenders © Command Centre
+      </div>
+
+      {/* CONTROL PANEL */}
+      <div style={{
+        background:"#ffffff",
+        padding:"20px",
+        borderRadius:"12px",
+        boxShadow:"0 8px 20px rgba(0,0,0,0.12)",
+        marginBottom:"25px"
+      }}>
+
+        {/* SEARCH */}
+        <div style={{marginBottom:"15px"}}>
+          <input
+            placeholder="Search parts (e.g. starter motor)"
+            value={query}
+            onChange={(e)=>setQuery(e.target.value)}
+            style={{
+              padding:"10px",
+              width:"300px",
+              marginRight:"10px",
+              border:"1px solid #ccc",
+              borderRadius:"6px"
+            }}
+          />
+
+          <button
+            onClick={search}
+            style={{
+              padding:"10px 14px",
+              background:"#2563eb",
+              color:"#fff",
+              border:"none",
+              borderRadius:"6px",
+              fontWeight:600
+            }}
+          >
+            Search
+          </button>
+        </div>
+
+        {/* FILTERS */}
+        <div style={{
+          fontSize:"14px",
+          color:"#111827",
+          fontWeight:500
+        }}>
+          <label style={{marginRight:"20px"}}>
+            <input
+              type="checkbox"
+              checked={domestic}
+              onChange={()=>setDomestic(!domestic)}
+            />
+            <span style={{marginLeft:"6px"}}>Domestic only</span>
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={used}
+              onChange={()=>setUsed(!used)}
+            />
+            <span style={{marginLeft:"6px"}}>Include used parts</span>
+          </label>
+        </div>
+
+      </div>
+
+      {/* RESULTS */}
+      {data?.results?.map((s:any,i:number)=>(
+        <div key={i} style={{
+          background:"#ffffff",
+          padding:"16px",
+          borderRadius:"12px",
+          boxShadow:"0 6px 18px rgba(0,0,0,0.12)",
+          marginBottom:"18px"
+        }}>
+
+          {/* HEADER ROW */}
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between",
+            alignItems:"center"
+          }}>
+            <strong style={{fontSize:"16px"}}>{s.supplier}</strong>
+
+            {s.label && (
+              <span style={{
+                fontSize:"11px",
+                padding:"4px 8px",
+                borderRadius:"6px",
+                background:
+                  s.label === "BEST VALUE" ? "#16a34a" :
+                  s.label === "CHEAPEST" ? "#2563eb" :
+                  "#ef4444",
+                color:"#fff"
+              }}>
+                {s.label}
+              </span>
+            )}
+          </div>
+
+          <div style={{color:"#374151"}}>{s.partNumber}</div>
+
+          <div style={{
+            fontWeight:700,
+            color:"#111827",
+            marginBottom:"8px"
+          }}>
+            ${s.memberPrice || s.price}
+          </div>
+
+          {/* COMPATIBLE */}
+          {s.compatible?.length > 0 && (
+            <div style={{marginTop:"10px"}}>
+              <div style={{fontSize:"12px", color:"#6b7280"}}>Compatible</div>
+              {s.compatible.map((c:any,j:number)=>(
+                <div key={j}>
+                  {c.supplier} {c.partNumber}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* UPGRADES */}
+          {s.upgrades?.length > 0 && (
+            <div style={{marginTop:"10px"}}>
+              <div style={{fontSize:"12px", color:"#6b7280"}}>Upgrades</div>
+              {s.upgrades.map((u:any,j:number)=>(
+                <div key={j}>
+                  {u.supplier} {u.partNumber}
+                </div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

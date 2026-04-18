@@ -1,0 +1,206 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+function scorePart(p:any) {
+  const price = p.price || 9999;
+  const delivery = p.deliveryDays || 5;
+  const supplierWeight = p.type === "physical" ? 0.9 : p.type === "hybrid" ? 1 : 1.1;
+
+  return Math.round(price * supplierWeight + delivery * 10);
+}
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+  const [showCompatible, setShowCompatible] = useState(true);
+  const [showUpgrades, setShowUpgrades] = useState(true);
+  const [cheapestOnly, setCheapestOnly] = useState(false);
+
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}`);
+    const json = await res.json();
+
+    const scored = json.results.map((r:any)=>({
+      ...r,
+      score: scorePart(r)
+    }));
+
+    const minPrice = Math.min(...scored.map((r:any)=>r.price));
+    const minScore = Math.min(...scored.map((r:any)=>r.score));
+
+    const labelled = scored.map((r:any)=>({
+      ...r,
+      label:
+        r.price === minPrice ? "CHEAPEST" :
+        r.score === minScore ? "BEST VALUE" :
+        null
+    }));
+
+    setData({results: labelled});
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+    <div style={{background:"#e5e7eb", minHeight:"100vh", padding:"30px", color:"#111827"}}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px",
+        borderRadius:"12px",
+        color:"#9ca3af",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px",
+        boxShadow:"0 10px 25px rgba(0,0,0,0.3)"
+      }}>
+        JustDefenders © Command Centre
+      </div>
+
+      {/* CONTROLS */}
+      <div style={{
+        background:"#fff",
+        padding:"20px",
+        borderRadius:"12px",
+        marginBottom:"25px",
+        boxShadow:"0 8px 20px rgba(0,0,0,0.1)"
+      }}>
+
+        <input
+          placeholder="Enter VIN"
+          value={vinInput}
+          onChange={(e)=>setVinInput(e.target.value.toUpperCase())}
+          style={{padding:"8px", marginRight:"10px"}}
+        />
+
+        <button onClick={()=>{
+          if (!vinInput) return;
+          if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+          setActiveVin(vinInput);
+          setVinInput("");
+        }}>Add</button>
+
+        <div style={{marginTop:"10px"}}>
+          {vins.map((v,i)=>(
+            <span key={i}
+              onClick={()=>setActiveVin(v)}
+              style={{
+                display:"inline-flex",
+                alignItems:"center",
+                marginRight:"8px",
+                padding:"6px 10px",
+                borderRadius:"15px",
+                cursor:"pointer",
+                background: activeVin===v ? "#16a34a" : "#e5e7eb",
+                color: activeVin===v ? "#fff" : "#111827"
+              }}
+            >
+              {v}
+              <span
+                onClick={(e)=>{
+                  e.stopPropagation();
+                  setVins(vins.filter(x=>x!==v));
+                }}
+                style={{marginLeft:"8px", color:"#ef4444"}}
+              >×</span>
+            </span>
+          ))}
+        </div>
+
+        <div style={{marginTop:"10px"}}>
+          <input
+            placeholder="Search parts"
+            value={query}
+            onChange={(e)=>setQuery(e.target.value)}
+            style={{padding:"8px", marginRight:"10px"}}
+          />
+          <button onClick={search}>Search</button>
+        </div>
+
+        <div style={{marginTop:"10px"}}>
+          <label><input type="checkbox" checked={domestic} onChange={()=>setDomestic(!domestic)} /> Domestic</label>
+          <label style={{marginLeft:"10px"}}><input type="checkbox" checked={used} onChange={()=>setUsed(!used)} /> Used</label>
+          <label style={{marginLeft:"10px"}}><input type="checkbox" checked={showCompatible} onChange={()=>setShowCompatible(!showCompatible)} /> Compatible</label>
+          <label style={{marginLeft:"10px"}}><input type="checkbox" checked={showUpgrades} onChange={()=>setShowUpgrades(!showUpgrades)} /> Upgrades</label>
+          <label style={{marginLeft:"10px"}}><input type="checkbox" checked={cheapestOnly} onChange={()=>setCheapestOnly(!cheapestOnly)} /> Cheapest</label>
+        </div>
+
+      </div>
+
+      {/* RESULTS */}
+      {data?.results
+        ?.filter((s:any)=>{
+          if (cheapestOnly) {
+            const min = Math.min(...data.results.map((r:any)=>r.price));
+            return s.price === min;
+          }
+          return true;
+        })
+        .map((s:any,i:number)=>(
+
+        <div key={i} style={{
+          background:"#fff",
+          padding:"18px",
+          borderRadius:"12px",
+          marginBottom:"18px",
+          boxShadow:"0 6px 16px rgba(0,0,0,0.1)"
+        }}>
+
+          {/* HEADER */}
+          <div style={{display:"flex", justifyContent:"space-between"}}>
+            <strong style={{fontSize:"16px"}}>{s.supplier}</strong>
+
+            {s.label && (
+              <span style={{
+                fontSize:"11px",
+                padding:"4px 8px",
+                borderRadius:"6px",
+                background: s.label==="CHEAPEST" ? "#2563eb" : "#16a34a",
+                color:"#fff"
+              }}>
+                {s.label}
+              </span>
+            )}
+          </div>
+
+          {/* PART */}
+          <div style={{color:"#374151"}}>{s.partNumber}</div>
+
+          {/* PRICE */}
+          <div style={{
+            fontSize:"20px",
+            fontWeight:800,
+            marginTop:"5px"
+          }}>
+            ${s.price}
+          </div>
+
+          {/* LINK */}
+          {s.url && (
+            <a href={s.url} target="_blank" style={{
+              display:"inline-block",
+              marginTop:"8px",
+              color:"#2563eb",
+              fontWeight:600
+            }}>
+              View Supplier →
+            </a>
+          )}
+
+        </div>
+
+      ))}
+
+    </div>
+  );
+}

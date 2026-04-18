@@ -1,0 +1,317 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+function getDistance(lat1:number, lon1:number, lat2:number, lon2:number) {
+
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180) *
+    Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return Math.round(R * c);
+}
+
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+const [userLocation, setUserLocation] = useState<any>(null);
+
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(()=>{
+  search();
+
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(
+      (pos)=>{
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        });
+      },
+      ()=>{}
+    );
+  }
+
+},[]);
+
+  return (
+    <div style={{
+      background:"#e5e7eb",
+      minHeight:"100vh",
+      padding:"30px",
+      color:"#1f2937"   // Ã°Å¸â€˜Ë† GLOBAL TEXT FIX (NO FADE)
+    }}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px 25px",
+        borderRadius:"12px",
+        color:"#9ca3af",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px",
+        boxShadow:"0 10px 25px rgba(0,0,0,0.35)"
+      }}>
+        JustDefenders Command Centre
+      </div>
+
+      {/* CONTROL PANEL */}
+      <div style={{
+        background:"#ffffff",
+        padding:"20px",
+        borderRadius:"12px",
+        boxShadow:"0 8px 20px rgba(0,0,0,0.12)",
+        marginBottom:"25px"
+      }}>
+
+        {/* VIN */}
+        <div style={{marginBottom:"15px"}}>
+          <input
+            placeholder="Enter VIN"
+            value={vinInput}
+            onChange={(e)=>setVinInput(e.target.value.toUpperCase())}
+            style={{
+              padding:"10px",
+              width:"260px",
+              marginRight:"10px",
+              border:"1px solid #ccc",
+              borderRadius:"6px"
+            }}
+          />
+
+          <button
+            onClick={()=>{
+              if (!vinInput) return;
+              if (!vins.includes(vinInput)) {
+                setVins([...vins, vinInput]);
+              }
+              setActiveVin(vinInput);
+              setVinInput("");
+            }}
+            style={{
+              padding:"10px 14px",
+              background:"#16a34a",
+              color:"#fff",
+              border:"none",
+              borderRadius:"6px",
+              fontWeight:600
+            }}
+          >
+            Add
+          </button>
+        </div>
+
+        {/* VIN CHIPS */}
+        <div style={{marginBottom:"15px"}}>
+          {vins.map((v,i)=>(
+            <span
+              key={i}
+              onClick={()=>setActiveVin(v)}
+              style={{
+                display:"inline-flex",
+                alignItems:"center",
+                marginRight:"8px",
+                padding:"6px 10px",
+                borderRadius:"20px",
+                cursor:"pointer",
+                background: activeVin === v ? "#16a34a" : "#e5e7eb",
+                color: activeVin === v ? "#fff" : "#111827"
+              }}
+            >
+              {v}
+              <span
+                onClick={(e)=>{
+                  e.stopPropagation();
+                  setVins(vins.filter(x=>x !== v));
+                }}
+                style={{
+                  marginLeft:"8px",
+                  color:"#ef4444",
+                  fontWeight:700,
+                  cursor:"pointer"
+                }}
+              >
+                Ãƒâ€”
+              </span>
+            </span>
+          ))}
+        </div>
+
+        {/* SEARCH */}
+        <div style={{marginBottom:"15px"}}>
+          <input
+            placeholder="Search parts"
+            value={query}
+            onChange={(e)=>setQuery(e.target.value)}
+            style={{
+              padding:"10px",
+              width:"260px",
+              marginRight:"10px",
+              border:"1px solid #ccc",
+              borderRadius:"6px"
+            }}
+          />
+
+          <button
+            onClick={search}
+            style={{
+              padding:"10px 14px",
+              background:"#2563eb",
+              color:"#fff",
+              border:"none",
+              borderRadius:"6px",
+              fontWeight:600
+            }}
+          >
+            Search
+          </button>
+        </div>
+
+        {/* FILTERS (ONLY ONE BLOCK NOW) */}
+        <div style={{fontWeight:500}}>
+          <label style={{marginRight:"20px"}}>
+            <input
+              type="checkbox"
+              checked={domestic}
+              onChange={()=>setDomestic(!domestic)}
+            />
+            <span style={{marginLeft:"6px"}}>Domestic only</span>
+          </label>
+
+          <label>
+            <input
+              type="checkbox"
+              checked={used}
+              onChange={()=>setUsed(!used)}
+            />
+            <span style={{marginLeft:"6px"}}>Include used</span>
+          </label>
+        </div>
+
+      </div>
+
+      {/* RESULTS */}
+      {data?.results?.map((s:any,i:number)=>(
+        <div key={i} style={{
+          background:"#ffffff",
+          padding:"16px",
+          borderRadius:"12px",
+          boxShadow:"0 6px 18px rgba(0,0,0,0.12)",
+          marginBottom:"18px"
+        }}>
+
+          <div style={{
+            display:"flex",
+            justifyContent:"space-between"
+          }}>
+            <strong style={{color:"#111827"}}>
+              {s.supplier}
+            </strong>
+
+            {s.label && (
+              <span style={{
+                fontSize:"11px",
+                padding:"4px 8px",
+                borderRadius:"6px",
+                background:"#16a34a",
+                color:"#fff"
+              }}>
+                {s.label}
+              </span>
+            )}
+          </div>
+
+          <div style={{fontWeight:500}}>
+            {s.partNumber}
+
+{/* LOCATION INFO */}
+<div style={{
+  fontSize:"12px",
+  fontWeight:600,
+  marginTop:"4px",
+  color:"#374151"
+}}>
+
+  {userLocation && s.location && (
+    <>📍 {getDistance(
+      userLocation.lat,
+      userLocation.lng,
+      s.location.lat,
+      s.location.lng
+    )} km away</>
+  )}
+
+  {!s.location && (
+    <>🌐 Online</>
+  )}
+
+</div>
+
+<div style={{
+  fontSize:"12px",
+  fontWeight:600,
+  marginTop:"2px",
+  color:
+    s.type === "physical" ? "#16a34a" :
+    s.type === "hybrid" ? "#2563eb" :
+    "#6b7280"
+}}>
+  {s.type === "physical" ? "Physical" :
+   s.type === "hybrid" ? "Hybrid" :
+   "Online"}
+</div>
+          </div>
+
+          <div style={{
+            fontSize:"18px",
+            fontWeight:800
+          }}>
+            ${s.memberPrice || s.price}
+          </div>
+
+          {s.compatible?.length > 0 && (
+            <div style={{marginTop:"10px"}}>
+              <div style={{fontWeight:700}}>Compatible Parts</div>
+              {s.compatible.map((c:any,j:number)=>(
+                <div key={j}>{c.supplier} {c.partNumber}</div>
+              ))}
+            </div>
+          )}
+
+          {s.upgrades?.length > 0 && (
+            <div style={{marginTop:"10px"}}>
+              <div style={{fontWeight:700}}>Performance Upgrades</div>
+              {s.upgrades.map((u:any,j:number)=>(
+                <div key={j}>{u.supplier} {u.partNumber}</div>
+              ))}
+            </div>
+          )}
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

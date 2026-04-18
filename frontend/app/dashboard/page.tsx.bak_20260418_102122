@@ -1,0 +1,164 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [vin, setVin] = useState("");
+  const [query, setQuery] = useState("");
+  const [data, setData] = useState<any>(null);
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+  const [userLocation, setUserLocation] = useState<any>(null);
+
+  // FETCH
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}&vin=${vin}&domestic=${domestic}&used=${used}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => { search(); }, []);
+
+  // GEO
+  useEffect(() => {
+    if (!navigator.geolocation) return;
+    navigator.geolocation.getCurrentPosition(
+      (pos) => setUserLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      })
+    );
+  }, []);
+
+  // DISTANCE
+  function getDistance(lat1:number, lon1:number, lat2:number, lon2:number) {
+    const R = 6371;
+    const dLat = (lat2 - lat1) * Math.PI / 180;
+    const dLon = (lon2 - lon1) * Math.PI / 180;
+    const a =
+      Math.sin(dLat/2)**2 +
+      Math.cos(lat1 * Math.PI/180) *
+      Math.cos(lat2 * Math.PI/180) *
+      Math.sin(dLon/2)**2;
+    return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+  }
+
+  // ICONS
+  function renderType(s:any) {
+    if (s.type === "physical") return <span style={{color:"#16a34a"}}>🧱 Physical</span>;
+    if (s.type === "hybrid") return <span style={{color:"#2563eb"}}>🔷 Hybrid</span>;
+    return <span style={{color:"#6b7280"}}>🌐 Online</span>;
+  }
+
+  return (
+    <div style={{background:"#f3f4f6", minHeight:"100vh"}}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        color:"#fff",
+        padding:"20px 30px",
+        fontSize:"20px",
+        fontWeight:600
+      }}>
+        JustDefenders Command Centre
+      </div>
+
+      {/* CONTROLS */}
+      <div style={{
+        padding:"20px 30px"
+      }}>
+
+        <div style={{
+          background:"#fff",
+          padding:"20px",
+          borderRadius:"10px",
+          boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+          marginBottom:"20px"
+        }}>
+
+          {/* VIN */}
+          <div style={{marginBottom:"10px"}}>
+            <input
+              placeholder="Enter VIN"
+              value={vin}
+              onChange={(e)=>setVin(e.target.value.toUpperCase())}
+              style={{padding:"8px", marginRight:"10px", width:"220px"}}
+            />
+          </div>
+
+          {/* SEARCH */}
+          <div style={{marginBottom:"10px"}}>
+            <input
+              placeholder="Search parts..."
+              value={query}
+              onChange={(e)=>setQuery(e.target.value)}
+              style={{padding:"8px", marginRight:"10px", width:"300px"}}
+            />
+            <button
+              onClick={search}
+              style={{
+                padding:"8px 14px",
+                background:"#2563eb",
+                color:"#fff",
+                border:"none",
+                borderRadius:"6px",
+                cursor:"pointer"
+              }}
+            >
+              Search
+            </button>
+          </div>
+
+          {/* FILTERS */}
+          <div>
+            <label style={{marginRight:"15px"}}>
+              <input type="checkbox" checked={domestic} onChange={()=>setDomestic(!domestic)} />
+              Domestic only
+            </label>
+
+            <label>
+              <input type="checkbox" checked={used} onChange={()=>setUsed(!used)} />
+              Include used parts
+            </label>
+          </div>
+
+        </div>
+
+        {/* RESULTS */}
+        {data?.results?.map((s:any,i:number)=>(
+          <div key={i} style={{
+            background:"#fff",
+            padding:"15px",
+            borderRadius:"10px",
+            boxShadow:"0 4px 12px rgba(0,0,0,0.08)",
+            marginBottom:"15px"
+          }}>
+
+            <div style={{display:"flex", justifyContent:"space-between"}}>
+              <strong>{s.supplier}</strong>
+              {renderType(s)}
+            </div>
+
+            {userLocation && s.location && (
+              <div style={{fontSize:"12px", color:"#555"}}>
+                📏 {getDistance(
+                  userLocation.lat,
+                  userLocation.lng,
+                  s.location.lat,
+                  s.location.lng
+                ).toFixed(1)} km away
+              </div>
+            )}
+
+            <div>{s.partNumber}</div>
+            <div style={{fontWeight:600}}>${s.price}</div>
+
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+}
