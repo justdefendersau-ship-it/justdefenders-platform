@@ -1,148 +1,87 @@
-﻿require('dotenv').config();
+﻿const express = require('express')
+const cors = require('cors')
 
-const express = require('express');
-const cors = require('cors');
-const { createClient } = require('@supabase/supabase-js');
-
-const app = express();
-app.use(cors());
-
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_KEY
-);
-
-// --------------------------------------------------
-// SCORING ENGINE (SAFE)
-// --------------------------------------------------
-
-function calculateScore(price, rating, tier, authorised) {
-  let score = 0;
-
-  // Price (lower = better)
-  score += (1000 - (price || 999));
-
-  // Rating
-  score += (Number(rating) || 0) * 100;
-
-  // Tier
-  if (tier === 'gold') score += 300;
-  else if (tier === 'silver') score += 200;
-  else score += 100;
-
-  // Authorised
-  if (authorised) score += 200;
-
-  return Math.round(score);
-}
-
-// --------------------------------------------------
-// SIMPLE PRICE INSIGHT
-// --------------------------------------------------
-
-function getInsight(price) {
-  if (!price) return "No data";
-  if (price < 250) return "Good price";
-  if (price > 350) return "Expensive";
-  return "Fair price";
-}
-
-// --------------------------------------------------
-// SIMPLE PREDICTION (SAFE PLACEHOLDER)
-// --------------------------------------------------
-
-function getPrediction(price) {
-  if (!price) return "Unknown";
-  if (price < 300) return "Buy now";
-  return "Monitor price";
-}
-
-// --------------------------------------------------
-// API
-// --------------------------------------------------
+const app = express()
+app.use(cors())
 
 app.get('/api/parts', async (req, res) => {
 
-  const query = req.query.q || '';
+  const query = req.query.q || ''
 
-  try {
+  // ------------------------------
+  // MOCK DATA (SAFE BASELINE)
+  // Replace later with DB call
+  // ------------------------------
+  let data = [
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 320 },
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 302 },
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 334 },
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 317 },
+    { supplier: 'Unknown', name: 'Starter Motor', price: null }
+  ]
 
-    // -----------------------------
-    // 1. PARTS
-    // -----------------------------
-    const { data: parts, error: partsError } = await supabase
-      .from('parts')
-      .select('name, price, supplier_id')
-      .ilike('name', '%' + query + '%')
-      .limit(20);
+  // ------------------------------
+  // FILTER BY QUERY
+  // ------------------------------
+  data = data.filter(p =>
+    p.name.toLowerCase().includes(query.toLowerCase())
+  )
 
-    if (partsError) {
-      console.log('PARTS ERROR:', partsError.message);
-      return res.json({ results: [] });
+  // ------------------------------
+  // CLEAN + NORMALISE
+  // ------------------------------
+  let results = data
+    .map(p => ({
+      supplier: p.supplier || 'Unknown',
+      partNumber: p.name,
+      price: p.price ? Number(p.price) : null,
+      rating: 3,
+      insight: 'Fair price',
+      prediction: 'Monitor price',
+      url: 'https://www.google.com/search?q=' + encodeURIComponent(p.name)
+    }))
+    .filter(p => p.price !== null)
+
+  // ------------------------------
+  // GROUP BY SUPPLIER
+  // ------------------------------
+  const grouped = {}
+
+  results.forEach(p => {
+    if (!grouped[p.supplier]) grouped[p.supplier] = []
+    grouped[p.supplier].push(p)
+  })
+
+  let finalResults = Object.keys(grouped).map(supplier => {
+
+    const items = grouped[supplier]
+    items.sort((a, b) => a.price - b.price)
+
+    return {
+      ...items[0],
+      options: items.length
     }
 
-    // -----------------------------
-    // 2. SUPPLIERS
-    // -----------------------------
-    const { data: suppliers } = await supabase
-      .from('suppliers')
-      .select('id, name, website, rating, tier, is_authorised');
+  })
 
-    const supplierMap = {};
-    (suppliers || []).forEach(s => {
-      supplierMap[s.id] = s;
-    });
+  // ------------------------------
+  // RANKING
+  // ------------------------------
+  finalResults = finalResults.map(p => {
+    const score = (p.rating * 20) - (p.price / 10)
+    return { ...p, score }
+  })
 
-    // -----------------------------
-    // 3. JOIN + INTELLIGENCE
-    // -----------------------------
-    let results = (parts || []).map(p => {
+  finalResults.sort((a, b) => b.score - a.score)
 
-      const s = supplierMap[p.supplier_id];
-
-      const price = Number(p.price) || 0;
-
-      const score = calculateScore(
-        price,
-        s?.rating,
-        s?.tier,
-        s?.is_authorised
-      );
-
-      return {
-        supplier: s?.name || "Unknown",
-        partNumber: p.name,
-        price: price,
-        score: score,
-        insight: getInsight(price),
-        prediction: getPrediction(price),
-
-        url:
-          s?.website ||
-          'https://www.google.com/search?q=' + encodeURIComponent(p.name)
-      };
-    });
-
-    // -----------------------------
-    // 4. SORT + BEST
-    // -----------------------------
-    results.sort((a, b) => b.score - a.score);
-
-    if (results.length > 0) {
-      results[0].best = true;
-    }
-
-    res.json({ results });
-
-  } catch (err) {
-    console.log('API ERROR:', err.message);
-    res.json({ results: [] });
+  if (finalResults.length > 0) {
+    finalResults[0].best = true
   }
-});
 
-// --------------------------------------------------
+  res.json({ results: finalResults })
+
+})
 
 app.listen(4000, () => {
-  console.log('API running (INTELLIGENCE RESTORED) on port 4000');
-});
-
+  console.log('API running (STABLE BASELINE) on port 4000')
+})
