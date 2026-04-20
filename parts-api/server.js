@@ -7,169 +7,132 @@ const { createClient } = require('@supabase/supabase-js');
 const app = express();
 app.use(cors());
 
-const PORT = 4000;
-
 const supabase = createClient(
   process.env.SUPABASE_URL,
   process.env.SUPABASE_KEY
 );
 
-// ==================================================
-// SCORING
-// ==================================================
+// --------------------------------------------------
+// SCORING ENGINE (SAFE)
+// --------------------------------------------------
 
-function getTierScore(tier) {
-  if (!tier) return 50;
-  const t = tier.toLowerCase();
-  if (t === 'gold') return 300;
-  if (t === 'silver') return 200;
-  if (t === 'bronze') return 100;
-  return 50;
-}
-
-function calculateScore(p) {
+function calculateScore(price, rating, tier, authorised) {
   let score = 0;
 
-  const price = Number(p.price) || 9999;
-  score += (1000 - price);
+  // Price (lower = better)
+  score += (1000 - (price || 999));
 
-  const rating = Number(p.suppliers?.rating) || 0;
-  score += rating * 100;
+  // Rating
+  score += (Number(rating) || 0) * 100;
 
-  score += getTierScore(p.suppliers?.tier);
+  // Tier
+  if (tier === 'gold') score += 300;
+  else if (tier === 'silver') score += 200;
+  else score += 100;
 
-  if (p.suppliers?.is_authorised) {
-    score += 200;
-  }
+  // Authorised
+  if (authorised) score += 200;
 
   return Math.round(score);
 }
 
-// ==================================================
-// PRICE INSIGHT (HISTORY)
-// ==================================================
+// --------------------------------------------------
+// SIMPLE PRICE INSIGHT
+// --------------------------------------------------
 
-function getPriceInsight(prices) {
-  if (!prices || prices.length < 2) return "No history";
-
-  const sorted = prices.sort(
-    (a, b) => new Date(a.created_at) - new Date(b.created_at)
-  );
-
-  const first = Number(sorted[0].price);
-  const last = Number(sorted[sorted.length - 1].price);
-
-  const change = last - first;
-
-  if (change < -20) return "Price dropping";
-  if (change > 20) return "Price rising";
-  return "Stable price";
+function getInsight(price) {
+  if (!price) return "No data";
+  if (price < 250) return "Good price";
+  if (price > 350) return "Expensive";
+  return "Fair price";
 }
 
-// ==================================================
-// PREDICTIVE PRICING
-// ==================================================
+// --------------------------------------------------
+// SIMPLE PREDICTION (SAFE PLACEHOLDER)
+// --------------------------------------------------
 
-function getPrediction(prices) {
-  if (!prices || prices.length < 3) return "Not enough data";
-
-  const sorted = prices.sort(
-    (a, b) => new Date(a.created_at) - new Date(b.created_at)
-  );
-
-  const first = Number(sorted[0].price);
-  const last = Number(sorted[sorted.length - 1].price);
-
-  const trend = last - first;
-
-  const avg =
-    sorted.reduce((sum, p) => sum + Number(p.price), 0) / sorted.length;
-
-  if (trend < -10) {
-    return "Falling — wait";
-  }
-
-  if (trend > 10) {
-    return "Rising — buy now";
-  }
-
-  if (last < avg) {
-    return "Good price vs average";
-  }
-
-  return "Stable pricing";
+function getPrediction(price) {
+  if (!price) return "Unknown";
+  if (price < 300) return "Buy now";
+  return "Monitor price";
 }
 
-// ==================================================
+// --------------------------------------------------
 // API
-// ==================================================
+// --------------------------------------------------
 
 app.get('/api/parts', async (req, res) => {
+
   const query = req.query.q || '';
 
   try {
-    const { data, error } = await supabase
-      .from('parts')
-      .select(
-        id,
-        name,
-        category,
-        price,
-        supplier_id,
-        part_prices (
-          price,
-          created_at
-        ),
-        suppliers (
-          id,
-          name,
-          website,
-          purchase_url,
-          rating,
-          tier,
-          is_authorised
-        )
-      )
-      .or('name.ilike.%' + query + '%,category.ilike.%' + query + '%')
-      .limit(50);
 
-    if (error) {
-      console.log('DB ERROR:', error.message);
+    // -----------------------------
+    // 1. PARTS
+    // -----------------------------
+    const { data: parts, error: partsError } = await supabase
+      .from('parts')
+      .select('name, price, supplier_id')
+      .ilike('name', '%' + query + '%')
+      .limit(20);
+
+    if (partsError) {
+      console.log('PARTS ERROR:', partsError.message);
       return res.json({ results: [] });
     }
 
-    const mapped = data.map(p => {
-      const score = calculateScore(p);
+    // -----------------------------
+    // 2. SUPPLIERS
+    // -----------------------------
+    const { data: suppliers } = await supabase
+      .from('suppliers')
+      .select('id, name, website, rating, tier, is_authorised');
+
+    const supplierMap = {};
+    (suppliers || []).forEach(s => {
+      supplierMap[s.id] = s;
+    });
+
+    // -----------------------------
+    // 3. JOIN + INTELLIGENCE
+    // -----------------------------
+    let results = (parts || []).map(p => {
+
+      const s = supplierMap[p.supplier_id];
+
+      const price = Number(p.price) || 0;
+
+      const score = calculateScore(
+        price,
+        s?.rating,
+        s?.tier,
+        s?.is_authorised
+      );
 
       return {
-        supplier: p.suppliers?.name || ('Supplier ' + p.supplier_id),
+        supplier: s?.name || "Unknown",
         partNumber: p.name,
-        description: p.category || '',
-        price: Number(p.price) || 0,
-        rating: Number(p.suppliers?.rating) || 0,
-        tier: p.suppliers?.tier || 'unknown',
-        authorised: p.suppliers?.is_authorised || false,
+        price: price,
         score: score,
-
-        priceInsight: getPriceInsight(p.part_prices),
-        prediction: getPrediction(p.part_prices),
+        insight: getInsight(price),
+        prediction: getPrediction(price),
 
         url:
-          p.suppliers?.purchase_url ||
-          p.suppliers?.website ||
-          'https://www.google.com/search?q=' + encodeURIComponent(p.name),
-
-        stock: 'unknown'
+          s?.website ||
+          'https://www.google.com/search?q=' + encodeURIComponent(p.name)
       };
     });
 
-    mapped.sort((a, b) => b.score - a.score);
+    // -----------------------------
+    // 4. SORT + BEST
+    // -----------------------------
+    results.sort((a, b) => b.score - a.score);
 
-    if (mapped.length > 0) {
-      mapped[0].best = true;
+    if (results.length > 0) {
+      results[0].best = true;
     }
 
-    res.json({ results: mapped });
+    res.json({ results });
 
   } catch (err) {
     console.log('API ERROR:', err.message);
@@ -177,8 +140,9 @@ app.get('/api/parts', async (req, res) => {
   }
 });
 
-// ==================================================
+// --------------------------------------------------
 
-app.listen(PORT, () => {
-  console.log('API running (PREDICTIVE PRICING ACTIVE) on port ' + PORT);
+app.listen(4000, () => {
+  console.log('API running (INTELLIGENCE RESTORED) on port 4000');
 });
+
