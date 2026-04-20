@@ -1,208 +1,140 @@
-"use client";
+﻿'use client'
 
-import { useState, useEffect } from "react";
+import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
-
-  const [data, setData] = useState<any>(null);
-  const [query, setQuery] = useState("");
-
-  const [vinInput, setVinInput] = useState("");
-  const [vins, setVins] = useState<string[]>([]);
-
-  const [international, setInternational] = useState(false);
-  const [used, setUsed] = useState(false);
+  const [query, setQuery] = useState('starter')
+  const [data, setData] = useState<any>({ results: [] })
 
   async function search() {
-    const res = await fetch("/api/parts?q=" + query);
-    const json = await res.json();
-    setData(json);
+    try {
+      const res = await fetch('http://localhost:4000/api/parts?q=' + query)
+      const json = await res.json()
+      setData(json)
+    } catch (err) {
+      console.log('Fetch error:', err)
+    }
   }
 
   useEffect(() => {
-    search();
-  }, []);
+    search()
+  }, [])
 
   return (
-    <div style={{
-      background: "#e5e7eb",
-      minHeight: "100vh",
-      display: "flex",
-      justifyContent: "center",
-      alignItems: "flex-start"
-    }}>
+    <div style={{ padding: "24px", background: "#111827", minHeight: "100vh", color: "#fff" }}>
 
-      <div style={{
-        width: "100%",
-        maxWidth:"1100px", margin:"0 auto",
-        padding: "30px"
-      }}>
+      {/* HEADER */}
+      <div style={{ marginBottom: "20px" }}>
+        <h1 style={{ fontSize: "28px", fontWeight: 800, color: "#d1d5db" }}>
+          Parts Intelligence
+        </h1>
+      </div>
 
-        {/* HEADER */}
-        <div style={{
-          background: "#111827",
-          padding: "20px",
-          borderRadius: "12px",
-          color: "#f9fafb",
-          fontSize: "26px",
-          fontWeight:900,
-          marginBottom: "25px",
-          boxShadow: "0 10px 30px rgba(0,0,0,0.4)"
-        }}>
-          JustDefenders Ãƒâ€šÃ‚Â© Command Centre
-        </div>
+      {/* SEARCH */}
+      <div style={{ marginBottom: "20px" }}>
+        <input
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Search parts..."
+          style={{
+            padding: "10px",
+            borderRadius: "8px",
+            width: "300px",
+            marginRight: "10px"
+          }}
+        />
+        <button
+          onClick={search}
+          style={{
+            background: "#2563eb",
+            padding: "10px 16px",
+            borderRadius: "8px",
+            color: "#fff"
+          }}
+        >
+          Search
+        </button>
+      </div>
 
-        {/* CONTROL PANEL */}
-        <div style={{
-          background: "#ffffff",
-          padding: "20px",
-          borderRadius: "12px",
-          marginBottom: "20px",
-          boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
-        }}>
+      {/* RESULTS */}
+      <div>
 
-          {/* VIN */}
-          <div style={{ marginBottom: "10px" }}>
-            <input
-              placeholder="Enter VIN"
-              value={vinInput}
-              onChange={(e) => setVinInput(e.target.value.toUpperCase())}
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "6px"
-              }}
-            />
+        {(data.results || []).map((s: any, i: number) => (
 
-            <button style={{
-              marginLeft: "8px",
-              background: "#16a34a",
-              color: "#fff",
-              padding: "8px 14px",
-              borderRadius: "6px",
-              fontWeight:700
-            }} onClick={() => {
-              if (!vinInput) return;
-              if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
-              setVinInput("");
+          <div key={i}
+            style={{
+              background: "#1f2937",
+              padding: "18px",
+              borderRadius: "12px",
+              marginBottom: "14px",
+              boxShadow: "0 4px 12px rgba(0,0,0,0.4)"
             }}>
-              Add
-            </button>
-          </div>
 
-          {/* VIN LIST */}
-          <div style={{ marginBottom: "10px" }}>
-            {vins.map((v, i) => (
-  <span key={i} style={{
-    marginRight:"8px",
-    padding:"6px 10px",
-    background:"#e5e7eb",
-    borderRadius:"12px",
-    fontWeight:700,
-    color:"#111827"
-  }}>
-    {v}
-    <span
-      onClick={() => setVins(vins.filter(x => x !== v))}
-      style={{
-        marginLeft:"6px",
-        color:"#dc2626",
-        cursor:"pointer",
-        fontWeight:900
-      }}
-    >
-      ÃƒÂ¯Ã‚Â¿Ã‚Â½-
-    </span>
-  </span>
-))}
-          </div>
+            {/* BEST OPTION */}
+            {s.best && (
+              <div style={{
+                background: "#16a34a",
+                color: "#fff",
+                padding: "4px 8px",
+                borderRadius: "6px",
+                fontSize: "12px",
+                display: "inline-block",
+                marginBottom: "6px"
+              }}>
+                BEST OPTION
+              </div>
+            )}
 
-          {/* SEARCH */}
-          <div>
-            <input
-              value={query}
-              onChange={(e) => setQuery(e.target.value)}
-              style={{
-                padding: "8px",
-                border: "1px solid #ccc",
-                borderRadius: "6px"
-              }}
-            />
-
-            <button style={{
-              marginLeft: "8px",
-              background: "#2563eb",
-              color: "#fff",
-              padding: "8px 16px",
-              borderRadius: "6px",
-              fontWeight:700
-            }} onClick={search}>
-              Search
-            </button>
-          </div>
-
-          {/* FILTERS */}
-          <div style={{ marginTop: "12px", fontWeight:700 }}>
-            <label style={{ marginRight: "12px" }}>
-              <input type="checkbox" defaultChecked /> OEM
-            </label>
-
-            <label style={{ marginRight: "12px" }}>
-              <input type="checkbox" defaultChecked /> Compatible
-            </label>
-
-            <label style={{ marginRight: "12px" }}>
-              <input type="checkbox" defaultChecked /> Upgrades
-            </label>
-
-            <label style={{ marginRight: "12px" }}>
-              <input
-                type="checkbox"
-                checked={international}
-                onChange={() => setInternational(!international)}
-              /> International
-            </label>
-
-            <label>
-              <input
-                type="checkbox"
-                checked={used}
-                onChange={() => setUsed(!used)}
-              /> Used
-            </label>
-          </div>
-
-        </div>
-
-        {/* RESULTS */}
-        {data?.results?.map((s: any, i: number) => (
-          <div key={i} style={{
-            background: "#ffffff",
-            padding: "18px",
-            marginBottom: "16px",
-            borderRadius: "12px",
-            border: "1px solid #e5e7eb",
-            boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
-          }}>
-            <div style={{ fontWeight:900, color: "#111827" }}>
+            {/* SUPPLIER */}
+            <div style={{ fontWeight: 700 }}>
               {s.supplier}
             </div>
 
-            <div style={{ color:"#111827" }}>
+            {/* PART */}
+            <div style={{ color: "#9ca3af" }}>
               {s.partNumber}
             </div>
 
-            <div style={{
-              fontWeight: 900,
-              fontSize: "20px",
-              color: "#111827"
-            }}>
-              ${s.price}
+            {/* PRICE */}
+            <div style={{ fontSize: "22px", fontWeight: 800 }}>
+              
             </div>
+
+            {/* SCORE */}
+            <div style={{ fontSize: "12px", marginTop: "4px" }}>
+              Score: {s.score}
+            </div>
+
+            {/* INSIGHT */}
+            <div style={{ fontSize: "12px", marginTop: "4px", color: "#9ca3af" }}>
+              {s.priceInsight}
+            </div>
+
+            {/* PREDICTION */}
+            <div style={{ fontSize: "12px", marginTop: "4px", color: "#9ca3af" }}>
+              {s.prediction}
+            </div>
+
+            {/* BUTTON */}
+            <div style={{ marginTop: "10px" }}>
+              <a href={s.url} target="_blank">
+                <button style={{
+                  background: "#2563eb",
+                  padding: "8px 12px",
+                  borderRadius: "6px",
+                  color: "#fff"
+                }}>
+                  View Part
+                </button>
+              </a>
+            </div>
+
           </div>
+
         ))}
 
       </div>
+
     </div>
-  );
+  )
 }

@@ -1,65 +1,82 @@
+﻿require("dotenv").config({ path: "C:/dev/justdefenders/.env" });
 
-const fs = require("fs");
-const HISTORY_FILE = "./data/price_history.json";
+const { createClient } = require("@supabase/supabase-js");
 
-function saveHistory(record){
-  try{
-    let data = [];
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+);
 
-    if(fs.existsSync(HISTORY_FILE)){
-      data = JSON.parse(fs.readFileSync(HISTORY_FILE));
-    }
+// --------------------------------------------------
 
-    data.push(record);
+async function getSuppliersMap() {
+  const { data } = await supabase.from("suppliers").select("id, name");
+  const map = {};
+  data.forEach(s => map[s.name.toLowerCase()] = s.id);
+  return map;
+}
 
-    // keep last 500 records
-    if(data.length > 500){
-      data = data.slice(-500);
-    }
+// --------------------------------------------------
 
-    fs.writeFileSync(HISTORY_FILE, JSON.stringify(data,null,2));
+async function savePart(part, suppliersMap) {
+  const supplierId = suppliersMap[part.supplier.toLowerCase()];
 
-  }catch(e){
-    console.log("History write error:", e.message);
-
-saveHistory({
-  partNumber: part,
-  supplier: supplier,
-  price: price,
-  timestamp: new Date().toISOString()
-});
+  if (!supplierId || !part.price) {
+    console.log("⚠ Skipping invalid part:", part);
+    return;
   }
+
+  // 🔹 Insert part
+  const { data: inserted, error } = await supabase
+    .from("parts")
+    .insert([{
+      supplier_id: supplierId,
+      name: part.partNumber,
+      category: part.description,
+      price: part.price
+    }])
+    .select()
+    .single();
+
+  if (error) {
+    console.log("DB ERROR:", error.message);
+    return;
+  }
+
+  // 🔹 Insert price history
+  await supabase.from("part_prices").insert([{
+    part_id: inserted.id,
+    price: part.price,
+    created_at: new Date().toISOString()
+  }]);
+
 }
-const fs = require("fs");
 
-const LOG_FILE = "./data/systemLogs.log";
+// --------------------------------------------------
 
-function log(msg){
-  try{
-    const entry = "[" + new Date().toISOString() + "] [Harvester] " + msg + "\n";
-    fs.appendFileSync(LOG_FILE, entry);
-  }catch{}
+async function runHarvester() {
+  const suppliersMap = await getSuppliersMap();
+
+  const parts = [
+    {
+      supplier: "Rovacraft",
+      partNumber: "Starter Motor",
+      description: "Electrical",
+      price: 320 + Math.floor(Math.random() * 40 - 20)
+    },
+    {
+      supplier: "Karcraft",
+      partNumber: "Fuel Pump",
+      description: "Fuel System",
+      price: 210 + Math.floor(Math.random() * 30 - 15)
+    }
+  ];
+
+  for (const p of parts) {
+    await savePart(p, suppliersMap);
+  }
+
+  console.log("✅ Harvest complete (price history updated)");
 }
 
-setInterval(()=>{
-  const msg = "Processed NRC9448 $" + Math.floor(Math.random()*100);
-  console.log(msg);
-
-saveHistory({
-  partNumber: part,
-  supplier: supplier,
-  price: price,
-  timestamp: new Date().toISOString()
-});
-  log(msg);
-},3000);
-
-console.log("Harvester running...");
-
-saveHistory({
-  partNumber: part,
-  supplier: supplier,
-  price: price,
-  timestamp: new Date().toISOString()
-});
-log("Harvester started");
+runHarvester();

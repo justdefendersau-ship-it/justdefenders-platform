@@ -15,6 +15,7 @@ start "" cmd /c node alertEngine.cjs
 start "" cmd /c node intelligenceEngine.cjs
 start "" cmd /c node predictEngine.cjs
 start "" cmd /c node emailAlerts.cjs
+start "" cmd /c node parts-api\server.js
 
 echo.
 echo System running in background
