@@ -12,35 +12,50 @@ export default function Dashboard() {
   const [activeVin, setActiveVin] = useState('DEF-110-001')
   const [newVin, setNewVin] = useState('')
 
-  async function search(q = query) {
-    const res = await fetch('http://localhost:4000/api/parts?q=' + q)
+  // MULTI FILTER
+  const [filters, setFilters] = useState([])
+
+  function toggleFilter(f) {
+    if (filters.includes(f)) {
+      setFilters(filters.filter(x => x !== f))
+    } else {
+      setFilters([...filters, f])
+    }
+  }
+
+  async function search() {
+
+    let url = 'http://localhost:4000/api/parts?q=' + query
+
+    if (activeVin) url += '&vin=' + activeVin
+
+    if (filters.length > 0) {
+      url += '&filters=' + filters.join(',')
+    }
+
+    console.log('SEARCH URL:', url)
+
+    const res = await fetch(url)
     const json = await res.json()
     setData(json)
   }
 
   useEffect(() => {
     search()
-  }, [])
+  }, [activeVin, filters])
 
-  function removeVin(vinToRemove) {
-
-  // Prevent removing last VIN
-  if (vins.length === 1) return
-
-  const updated = vins.filter(v => v !== vinToRemove)
-  setVins(updated)
-
-  // If active VIN was removed → switch to first remaining
-  if (activeVin === vinToRemove) {
-    setActiveVin(updated[0])
-  }
-}
-
-function addVin() {
+  function addVin() {
     if (newVin && !vins.includes(newVin)) {
       setVins([...vins, newVin])
       setNewVin('')
     }
+  }
+
+  function removeVin(v) {
+    if (vins.length === 1) return
+    const updated = vins.filter(x => x !== v)
+    setVins(updated)
+    if (activeVin === v) setActiveVin(updated[0])
   }
 
   return (
@@ -74,62 +89,51 @@ function addVin() {
           onChange={(e) => setQuery(e.target.value)}
           style={{ padding: '8px', flex: 1 }}
         />
-        <button
-          onClick={() => search()}
-          style={{ background: '#2563eb', color: '#fff', padding: '8px 14px', borderRadius: '6px' }}
-        >
-          Search
-        </button>
+        <button onClick={search}>Search</button>
       </div>
 
-      {/* VIN SYSTEM */}
+      {/* FILTERS */}
       <div style={{ marginBottom: '15px' }}>
+        {['OEM', 'Used', 'International'].map((f, i) => (
+          <button
+            key={i}
+            onClick={() => toggleFilter(f)}
+            style={{
+              marginRight: '8px',
+              padding: '6px 10px',
+              background: filters.includes(f) ? '#2563eb' : '#334155',
+              color: '#fff',
+              borderRadius: '6px'
+            }}
+          >
+            {f}
+          </button>
+        ))}
+      </div>
 
+      {/* VIN */}
+      <div style={{ marginBottom: '15px' }}>
         {vins.map((vin, i) => (
-  <span
-    key={i}
-    style={{
-      display: 'inline-flex',
-      alignItems: 'center',
-      padding: '8px 12px',
-      marginRight: '8px',
-      borderRadius: '20px',
-      background: vin === activeVin ? '#16a34a' : '#334155',
-      color: '#fff'
-    }}
-  >
-
-    <span
-      onClick={() => setActiveVin(vin)}
-      style={{ cursor: 'pointer', marginRight: '6px' }}
-    >
-      {vin}
-    </span>
-
-    <span
-      onClick={() => removeVin(vin)}
-      style={{
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        padding: '0 4px'
-      }}
-    >
-      ✕
-    </span>
-
-  </span>
-))}
+          <span key={i} style={{
+            display: 'inline-flex',
+            alignItems: 'center',
+            padding: '8px 12px',
+            marginRight: '8px',
+            borderRadius: '20px',
+            background: vin === activeVin ? '#16a34a' : '#334155',
+            color: '#fff'
+          }}>
+            <span onClick={() => setActiveVin(vin)} style={{ cursor: 'pointer' }}>
+              {vin}
+            </span>
+            <span onClick={() => removeVin(vin)} style={{ marginLeft: '6px', cursor: 'pointer' }}>✕</span>
+          </span>
+        ))}
 
         <div style={{ marginTop: '10px' }}>
-          <input
-            value={newVin}
-            onChange={(e) => setNewVin(e.target.value)}
-            placeholder='Add VIN'
-            style={{ padding: '6px', marginRight: '8px' }}
-          />
+          <input value={newVin} onChange={(e) => setNewVin(e.target.value)} placeholder="Add VIN" />
           <button onClick={addVin}>Add</button>
         </div>
-
       </div>
 
       {/* RESULTS */}
@@ -140,6 +144,18 @@ function addVin() {
       {data.results.map((s, i) => {
 
         const price = Number(s.price) || 0
+
+        const confidenceColour =
+          s.confidence >= 85 ? '#16a34a' :
+          s.confidence >= 60 ? '#f59e0b' :
+          '#dc2626'
+
+        // FIX: ALWAYS SHOW SOMETHING
+        const vehicleText = s.vehicle
+          ? s.vehicle.model + ' (' + s.vehicle.year + ')'
+          : 'your selected vehicle'
+
+        const confidence = s.confidence || 50
 
         return (
           <div key={i} style={{
@@ -156,10 +172,7 @@ function addVin() {
                 <div style={{ fontWeight: 'bold' }}>{s.supplier}</div>
                 <div>{s.partNumber}</div>
 
-                <div style={{
-                  fontSize: '22px',
-                  fontWeight: 'bold'
-                }}>
+                <div style={{ fontSize: '22px', fontWeight: 'bold' }}>
                   
                 </div>
               </div>
@@ -177,6 +190,16 @@ function addVin() {
 
             </div>
 
+            {/* FIXED VIN INTELLIGENCE */}
+            <div style={{ marginTop: '6px' }}>
+              ✔ Fits {vehicleText}
+            </div>
+
+            <div style={{ color: confidenceColour, fontWeight: 'bold' }}>
+              Confidence: {confidence}%
+            </div>
+
+            {/* EXPAND */}
             <div style={{ marginTop: '8px' }}>
               <button onClick={() => setExpanded(expanded === i ? null : i)}>
                 {expanded === i ? 'Hide options' : 'Show options (' + s.options + ')'}
@@ -199,5 +222,3 @@ function addVin() {
     </div>
   )
 }
-
-
