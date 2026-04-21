@@ -40,11 +40,12 @@ const res = await fetch(url)
   }
 
   function isWatching(item) {
-    return watchlist.some(w =>
-      w.part_number === item.partNumber &&
-      w.supplier === item.supplier
-    )
-  }
+  return watchlist.some(w =>
+    w.part_number === item.partNumber &&
+    w.supplier === item.supplier &&
+    w.vin === activeVin
+  )
+}
 
   async function addWatch(item) {
     const { error } = await supabase
@@ -52,7 +53,7 @@ const res = await fetch(url)
       .insert([{
         part_number: item.partNumber,
         supplier: item.supplier,
-        vin: 'DEF-110-001'
+        vin: activeVin
       }])
 
     if (error) {
@@ -69,6 +70,7 @@ const res = await fetch(url)
       .delete()
       .eq('part_number', item.partNumber)
       .eq('supplier', item.supplier)
+.eq('vin', activeVin)
 
     await loadWatchlist()
   }
@@ -160,17 +162,15 @@ const res = await fetch(url)
           <input
             value={vinInput}
             onChange={(e) => setVinInput(e.target.value)}
-            placeholder='Enter VIN (e.g. DEF-110-001)'
+            placeholder='Enter VIN'
             style={{ padding: '6px', marginRight: '10px' }}
           />
 
           <button
             onClick={addVin}
             style={{
-              background: '#2563eb',
-              color: '#fff',
-              padding: '6px 10px',
-              borderRadius: '6px'
+              background: '#16a34a',
+              
             }}
           >
             + Add VIN
@@ -188,8 +188,8 @@ const res = await fetch(url)
                 padding: '5px 10px',
                 borderRadius: '12px',
                 cursor: 'pointer',
-                background: v === activeVin ? '#2563eb' : '#ddd',
-                color: v === activeVin ? '#fff' : '#000'
+                background: v === activeVin ? '#16a34a' : '#d1fae5',
+                color: v === activeVin ? '#fff' : '#065f46'
               }}
             >
               {v}
@@ -222,7 +222,7 @@ const res = await fetch(url)
             style={{
               marginRight: '8px',
               padding: '6px 10px',
-              background: filters.includes(f) ? '#2563eb' : '#ddd',
+              background: filters.includes(f) ? '#2563eb' : '#d1fae5',
               color: filters.includes(f) ? '#fff' : '#000',
               borderRadius: '6px'
             }}
@@ -330,6 +330,12 @@ const res = await fetch(url)
     </div>
   )
 }
+
+
+
+
+
+
 
 
 
