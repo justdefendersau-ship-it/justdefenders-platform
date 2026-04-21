@@ -1,140 +1,137 @@
-﻿const express = require('express')
+﻿require('dotenv').config()
+
+const express = require('express')
 const cors = require('cors')
+const { createClient } = require('@supabase/supabase-js')
 
 const app = express()
 app.use(cors())
 
-// --------------------------------
-// VIN DECODER (MOCK - UPGRADE LATER)
-// --------------------------------
+const supabase = createClient(
+  process.env.SUPABASE_URL,
+  process.env.SUPABASE_KEY
+)
+
+// VIN DECODER
 function decodeVin(vin) {
-
   if (!vin) return null
-
   if (vin.includes('001')) {
-    return {
-      model: 'Defender 110',
-      engine: '2.2 TDCi',
-      year: '2012–2016'
-    }
+    return { model: 'Defender 110', engine: '2.2 TDCi', year: '2012–2016' }
   }
-
-  if (vin.includes('002')) {
-    return {
-      model: 'Defender 90',
-      engine: '2.4 TDCi',
-      year: '2007–2012'
-    }
-  }
-
-  return {
-    model: 'Unknown',
-    engine: 'Unknown',
-    year: 'Unknown'
-  }
+  return { model: 'Unknown', engine: 'Unknown', year: 'Unknown' }
 }
 
 app.get('/api/parts', async (req, res) => {
 
   const query = req.query.q || ''
   const vin = req.query.vin || null
+  const filters = req.query.filters ? req.query.filters.split(',') : []
 
   const vehicle = decodeVin(vin)
 
-  // --------------------------------
-  // MOCK DATA (WITH COMPATIBILITY)
-  // --------------------------------
   let data = [
-    { supplier: 'Rovacraft', name: 'Starter Motor', price: 320, compatible: ['DEF-110-001'] },
-    { supplier: 'Rovacraft', name: 'Starter Motor', price: 302, compatible: ['DEF-110-001'] },
-    { supplier: 'Rovacraft', name: 'Starter Motor', price: 334, compatible: ['DEF-110-002'] },
-    { supplier: 'Rovacraft', name: 'Starter Motor', price: 317, compatible: ['DEF-110-001'] },
-    { supplier: 'Alt Supplier', name: 'Starter Motor', price: 360, compatible: ['DEF-110-003'] }
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 302, type: 'OEM', compatible: ['DEF-110-001'] },
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 317, type: 'OEM', compatible: ['DEF-110-001'] },
+    { supplier: 'Rovacraft', name: 'Starter Motor', price: 320, type: 'Used', compatible: ['DEF-110-001'] }
   ]
 
-  // --------------------------------
-  // SEARCH FILTER
-  // --------------------------------
+  // SEARCH
   data = data.filter(p =>
     p.name.toLowerCase().includes(query.toLowerCase())
   )
 
-  // --------------------------------
-  // VIN FILTER (SMART)
-  // --------------------------------
-  let filtered = data
+  // FILTERS
+  if (filters.length > 0) {
+    data = data.filter(p => filters.includes(p.type))
+  }
 
+  // VIN FILTER
   if (vin) {
     const matches = data.filter(p =>
       p.compatible && p.compatible.includes(vin)
     )
-
-    if (matches.length > 0) {
-      filtered = matches
-    }
+    if (matches.length > 0) data = matches
   }
 
-  // --------------------------------
-  // NORMALISE + CONFIDENCE
-  // --------------------------------
-  let results = filtered.map(p => {
-
+  // NORMALISE
+  let results = data.map(p => {
     let confidence = 50
-
-    if (vin && p.compatible.includes(vin)) {
-      confidence = 90
-    }
+    if (vin && p.compatible.includes(vin)) confidence = 90
 
     return {
       supplier: p.supplier,
       partNumber: p.name,
       price: Number(p.price),
-      compatible: p.compatible,
       confidence,
       vehicle,
-      rating: 3,
-      insight: vin ? 'VIN matched' : 'General match',
-      prediction: 'Stable',
-      url: 'https://www.google.com/search?q=' + encodeURIComponent(p.name)
+      rating: 3
     }
-
   })
 
-  // --------------------------------
-  // GROUP BY SUPPLIER
-  // --------------------------------
+  // GROUP
   const grouped = {}
-
   results.forEach(p => {
     if (!grouped[p.supplier]) grouped[p.supplier] = []
     grouped[p.supplier].push(p)
   })
 
-  let finalResults = Object.keys(grouped).map(supplier => {
+  let finalResults = []
+
+  for (const supplier of Object.keys(grouped)) {
 
     const items = grouped[supplier]
     items.sort((a, b) => a.price - b.price)
 
-    return {
-      ...items[0],
-      options: items.length
+    const base = items[0]
+
+    // 🔥 REAL HISTORY FROM SUPABASE
+    const { data: historyData } = await supabase
+      .from('price_history')
+      .select('price')
+      .eq('supplier', base.supplier)
+      .eq('part_number', base.partNumber)
+      .order('created_at', { ascending: true })
+      .limit(5)
+
+    const history = historyData ? historyData.map(h => Number(h.price)) : []
+
+    // TREND
+    let trend = 'stable'
+    let change = 0
+    let buySignal = 'Hold'
+
+    if (history.length >= 2) {
+      const first = history[0]
+      const last = history[history.length - 1]
+
+      change = ((last - first) / first) * 100
+
+      if (last < first) {
+        trend = 'falling'
+        buySignal = 'Good time to buy'
+      }
+      if (last > first) {
+        trend = 'rising'
+        buySignal = 'Wait'
+      }
     }
 
-  })
+    finalResults.push({
+      ...base,
+      options: items.length,
+      allOptions: items,
+      explanation: 'Lowest price + strong VIN compatibility',
+      trend,
+      change: change.toFixed(1),
+      buySignal
+    })
+  }
 
-  // --------------------------------
-  // RANKING (CONFIDENCE BOOST)
-  // --------------------------------
+  // RANK
   finalResults = finalResults.map(p => {
-
     let score = (p.rating * 20) - (p.price / 10)
-
-    if (p.confidence >= 90) {
-      score += 40
-    }
-
+    if (p.confidence >= 90) score += 40
     return { ...p, score }
-
   })
 
   finalResults.sort((a, b) => b.score - a.score)
@@ -148,5 +145,5 @@ app.get('/api/parts', async (req, res) => {
 })
 
 app.listen(4000, () => {
-  console.log('API running (VIN INTELLIGENCE + CONFIDENCE ACTIVE) on port 4000')
+  console.log('API running (REAL INTELLIGENCE ACTIVE)')
 })
