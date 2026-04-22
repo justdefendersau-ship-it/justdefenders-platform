@@ -45,35 +45,6 @@ useEffect(() => {
     load()
   }, [])
 
-  
-  // =========================================================
-  // VIN INTELLIGENCE LAYER
-  // =========================================================
-  let processedResults = data.results
-
-  if (activeVin && data.results) {
-
-    processedResults = processedResults.map(r => {
-
-      // Simulated VIN compatibility boost
-      const vinMatchBoost = r.supplier === 'LR Direct' ? 15 : 5
-
-      return {
-        ...r,
-        confidence: (r.confidence || 50) + vinMatchBoost,
-        explanation: 'Matched to VIN ' + activeVin
-      }
-
-    })
-
-    // Re-rank based on price + confidence
-    processedResults.sort((a, b) => {
-      const scoreA = a.price - (a.confidence || 0)
-      const scoreB = b.price - (b.confidence || 0)
-      return scoreA - scoreB
-    })
-  }
-
   return (
     <div style={{ padding: '20px', background: '#0b1a33', color: '#ffffff' }}>
 
@@ -177,36 +148,7 @@ useEffect(() => {
 <div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
   {['OEM','USED','INTERNATIONAL'].map(f => {
     const isActive = filters.includes(f)
-    
-  // =========================================================
-  // VIN INTELLIGENCE LAYER
-  // =========================================================
-  let processedResults = data.results
-
-  if (activeVin && data.results) {
-
-    processedResults = processedResults.map(r => {
-
-      // Simulated VIN compatibility boost
-      const vinMatchBoost = r.supplier === 'LR Direct' ? 15 : 5
-
-      return {
-        ...r,
-        confidence: (r.confidence || 50) + vinMatchBoost,
-        explanation: 'Matched to VIN ' + activeVin
-      }
-
-    })
-
-    // Re-rank based on price + confidence
-    processedResults.sort((a, b) => {
-      const scoreA = a.price - (a.confidence || 0)
-      const scoreB = b.price - (b.confidence || 0)
-      return scoreA - scoreB
-    })
-  }
-
-  return (
+    return (
       <button
         key={f}
         onClick={() => toggleFilter(f)}
@@ -225,7 +167,7 @@ useEffect(() => {
   })}
 </div>
 {/* RESULTS */}
-      {processedResults.map((s, i) => (
+      {data.results.map((s, i) => (
         <div key={i} style={{
           background: '#ffffff', color: '#111',
           padding: '15px',
@@ -293,7 +235,6 @@ useEffect(() => {
     </div>
   )
 }
-
 
 
 
