@@ -4,19 +4,11 @@ import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
 
-  function toggleFilter(f) {
-    setFilters(prev => prev.includes(f)
-      ? prev.filter(x => x !== f)
-      : [...prev, f]
-    )
-  }
-
   const [data, setData] = useState({ results: [] })
   const [expanded, setExpanded] = useState(null)
 const [query, setQuery] = useState('starter')
 const [activeVin, setActiveVin] = useState('')
-const [vinList, setVinList] = useState([])
-const [filters, setFilters] = useState([])
+const [filter, setFilter] = useState('all')
 
   // =========================================================
   // LOAD DATA
@@ -53,17 +45,25 @@ useEffect(() => {
   fontSize: '28px',
   fontWeight: '700',
   marginBottom: '20px',
-  textShadow: '0 2px 4px rgba(0,0,0,0.4)'
+  letterSpacing: '0.5px'
 }}>
   JustDefenders Parts Intelligence
 </h2>
 
+{/* SEARCH + VIN */}
 <div style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
 
   <input
     value={query}
     onChange={(e) => setQuery(e.target.value)}
-    style={{ padding: '8px', borderRadius: '6px', width: '200px', color: '#000' }}
+    placeholder="Search parts..."
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '200px',
+      color: '#111'
+    }}
   />
 
   <button onClick={search} style={{
@@ -79,94 +79,76 @@ useEffect(() => {
     value={activeVin}
     onChange={(e) => setActiveVin(e.target.value)}
     placeholder="Enter VIN"
-    style={{ padding: '8px', borderRadius: '6px', width: '180px', color: '#000' }}
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '180px',
+      color: '#111'
+    }}
   />
 
-  <button
-    onClick={() => {
-      if (!activeVin) return
-      if (!vinList.includes(activeVin)) {
-        setVinList([...vinList, activeVin]); setActiveVin('')
-      }
-    }}
-    style={{
-      background: '#16a34a',
-      color: '#fff',
-      padding: '8px 12px',
-      borderRadius: '6px'
-    }}
-  >
+  <button style={{
+    background: '#16a34a',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
     + Add VIN
   </button>
 
 </div>
 
-{/* VIN CHIPS */}
-<div style={{ display: 'flex', gap: '8px', marginBottom: '15px', flexWrap: 'wrap' }}>
-  {vinList.map((vin, i) => (
-  <div
-    key={i}
-    style={{
-      display: 'flex',
-      alignItems: 'center',
-      gap: '6px',
-      background: activeVin === vin ? '#14532d' : '#16a34a',
-      color: '#fff',
-      padding: '6px 10px',
-      borderRadius: '20px',
-      fontSize: '12px'
-    }}
-  >
-
-    <span
-      onClick={() => setActiveVin(vin)}
-      style={{ cursor: 'pointer' }}
-    >
-      {vin}
-    </span>
-
-    <span
-      onClick={() => {
-        const updated = vinList.filter(v => v !== vin)
-        setVinList(updated)
-        if (activeVin === vin) setActiveVin('')
-      }}
-      style={{
-        cursor: 'pointer',
-        fontWeight: 'bold',
-        paddingLeft: '4px'
-      }}
-    >
-      ×
-    </span>
-
-  </div>
-))}
-</div>
-
 {/* FILTERS */}
-<div style={{ display: 'flex', gap: '10px', marginBottom: '15px' }}>
-  {['OEM','USED','INTERNATIONAL'].map(f => {
-    const isActive = filters.includes(f)
-    return (
-      <button
-        key={f}
-        onClick={() => toggleFilter(f)}
-        style={{
-          background: isActive ? '#2563eb' : '#e5e7eb',
-          color: isActive ? '#fff' : '#000',
-          padding: '6px 10px',
-          borderRadius: '6px',
-          cursor: 'pointer',
-          boxShadow: isActive ? '0 2px 6px rgba(37,99,235,0.6)' : 'none'
-        }}
-      >
-        {f}
-      </button>
-    )
-  })}
+<div style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
+
+  <input
+    value={query}
+    onChange={(e) => setQuery(e.target.value)}
+    placeholder="Search parts..."
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '200px',
+      color: '#111'
+    }}
+  />
+
+  <button onClick={search} style={{
+    background: '#2563eb',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    Search
+  </button>
+
+  <input
+    value={activeVin}
+    onChange={(e) => setActiveVin(e.target.value)}
+    placeholder="Enter VIN"
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '180px',
+      color: '#111'
+    }}
+  />
+
+  <button style={{
+    background: '#16a34a',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    + Add VIN
+  </button>
+
 </div>
-{/* RESULTS */}
+
+      {/* RESULTS */}
       {data.results.map((s, i) => (
         <div key={i} style={{
           background: '#ffffff', color: '#111',
@@ -235,14 +217,6 @@ useEffect(() => {
     </div>
   )
 }
-
-
-
-
-
-
-
-
 
 
 
