@@ -1,146 +1,201 @@
 ﻿'use client'
 
-import { useState, useEffect } from 'react'
-import VinManager from '../components/VinManager'
+import { useEffect, useState } from 'react'
 
 export default function Dashboard() {
 
-  const [query, setQuery] = useState('starter')
   const [data, setData] = useState({ results: [] })
   const [expanded, setExpanded] = useState(null)
-  const [filters, setFilters] = useState([])
-  const [activeVin, setActiveVin] = useState('')
+const [query, setQuery] = useState('starter')
+const [activeVin, setActiveVin] = useState('')
+const [filter, setFilter] = useState('all')
 
+  // =========================================================
+  // LOAD DATA
+  // =========================================================
   async function search() {
-    try {
-      let url = 'http://localhost:4000/api/parts?q=' + encodeURIComponent(query)
-
-      if (filters.length > 0) {
-        url += '&filters=' + encodeURIComponent(filters.join(','))
-      }
-
-      if (activeVin && activeVin.length > 5) {
-        url += '&vin=' + encodeURIComponent(activeVin)
-      }
-
-      const res = await fetch(url)
-      const json = await res.json()
-
-      if (json && json.results) {
-        setData(json)
-      } else {
-        setData({ results: [] })
-      }
-
-    } catch (err) {
-      console.error(err)
-    }
+  try {
+    const res = await fetch('http://localhost:4000/api/parts?q=' + encodeURIComponent(query))
+    const json = await res.json()
+    setData(json)
+  } catch (err) {
+    console.error('SEARCH ERROR:', err)
   }
+}
 
-  useEffect(() => {
-    search()
+useEffect(() => {
+    async function load() {
+      try {
+        const res = await fetch('http://localhost:4000/api/parts?q=starter')
+        const json = await res.json()
+        setData(json)
+      } catch (err) {
+        console.error('LOAD ERROR:', err)
+      }
+    }
+
+    load()
   }, [])
 
-  function toggleFilter(f) {
-    if (filters.includes(f)) {
-      setFilters(filters.filter(x => x !== f))
-    } else {
-      setFilters([...filters, f])
-    }
-  }
-
   return (
-    <div style={{ padding: '20px' }}>
+    <div style={{ padding: '20px', background: '#0b1a33', color: '#ffffff' }}>
 
-      <h2 style={{ color: '#555', fontSize: '22px', marginBottom: '20px' }}>
-        JustDefenders Parts Intelligence
-      </h2>
+      <h2 style={{
+  color: '#9ca3af',
+  fontSize: '28px',
+  fontWeight: '700',
+  marginBottom: '20px',
+  letterSpacing: '0.5px'
+}}>
+  JustDefenders Parts Intelligence
+</h2>
 
-      {/* SEARCH */}
-      <div style={{ marginBottom: '20px' }}>
-        <input
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          style={{ padding: '8px', marginRight: '10px', width: '250px' }}
-        />
+{/* SEARCH + VIN */}
+<div style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
 
-        <button
-          onClick={search}
-          style={{
-            background: '#2563eb',
-            color: '#fff',
-            padding: '8px 12px',
-            borderRadius: '6px'
-          }}
-        >
-          Search
-        </button>
-      </div>
+  <input
+    value={query}
+    onChange={(e) => setQuery(e.target.value)}
+    placeholder="Search parts..."
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '200px',
+      color: '#111'
+    }}
+  />
 
-      {/* VIN */}
-      <VinManager activeVin={activeVin} setActiveVin={setActiveVin} />
+  <button onClick={search} style={{
+    background: '#2563eb',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    Search
+  </button>
 
-      {/* FILTERS */}
-      <div style={{ marginBottom: '15px' }}>
-        {['OEM', 'Used', 'International'].map(f => (
-          <button
-            key={f}
-            onClick={() => toggleFilter(f)}
-            style={{
-              marginRight: '8px',
-              padding: '6px 10px',
-              borderRadius: '6px',
-              background: filters.includes(f) ? '#2563eb' : '#e5e7eb',
-              color: filters.includes(f) ? '#fff' : '#333'
-            }}
-          >
-            {f}
-          </button>
-        ))}
-      </div>
+  <input
+    value={activeVin}
+    onChange={(e) => setActiveVin(e.target.value)}
+    placeholder="Enter VIN"
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '180px',
+      color: '#111'
+    }}
+  />
+
+  <button style={{
+    background: '#16a34a',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    + Add VIN
+  </button>
+
+</div>
+
+{/* FILTERS */}
+<div style={{ display: 'flex', gap: '10px', marginBottom: '15px', alignItems: 'center' }}>
+
+  <input
+    value={query}
+    onChange={(e) => setQuery(e.target.value)}
+    placeholder="Search parts..."
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '200px',
+      color: '#111'
+    }}
+  />
+
+  <button onClick={search} style={{
+    background: '#2563eb',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    Search
+  </button>
+
+  <input
+    value={activeVin}
+    onChange={(e) => setActiveVin(e.target.value)}
+    placeholder="Enter VIN"
+    style={{
+      padding: '8px',
+      border: '1px solid #555',
+      borderRadius: '6px',
+      width: '180px',
+      color: '#111'
+    }}
+  />
+
+  <button style={{
+    background: '#16a34a',
+    color: '#fff',
+    padding: '8px 12px',
+    borderRadius: '6px'
+  }}>
+    + Add VIN
+  </button>
+
+</div>
 
       {/* RESULTS */}
       {data.results.map((s, i) => (
         <div key={i} style={{
-          background: '#ffffff',
+          background: '#ffffff', color: '#111',
           padding: '15px',
-          marginBottom: '15px',
+          marginTop: '15px',
           borderRadius: '8px',
-          boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
-          color: '#000'
+          boxShadow: '0 4px 12px rgba(0,0,0,0.08)'
         }}>
 
           <div style={{ display: 'flex', justifyContent: 'space-between' }}>
             <div>
-              <div style={{ fontWeight: 'bold', fontSize: '16px' }}>
-                {s.supplier}
-              </div>
-              <div style={{ color: '#222' }}>
-                {s.partNumber}
-              </div>
+              <div style={{ fontWeight: 'bold' }}>{s.supplier}</div>
+              <div>{s.partNumber}</div>
             </div>
 
-            <div style={{ color: '#16a34a', fontWeight: 'bold' }}>
-              BEST VALUE
-            </div>
+            {s.best && (
+              <div style={{ color: 'green', fontWeight: 'bold' }}>
+                BEST VALUE
+              </div>
+            )}
           </div>
 
+          {/* PRICE */}
           <div style={{
             fontSize: '26px',
             fontWeight: 'bold',
-            marginTop: '10px',
-            color: '#000'
+            marginTop: '10px'
           }}>
-            {'$' + s.price}
+            $ {s.price}
           </div>
 
+          {/* INTELLIGENCE */}
+          <div style={{
+            fontSize: '13px',
+            marginTop: '6px',
+            color: '#555'
+          }}>
+            Trend: {s.trend} | Signal: {s.buySignal} | Confidence: {s.confidence}%
+          </div>
+
+          {/* OPTIONS */}
           <div
             onClick={() => setExpanded(expanded === i ? null : i)}
             style={{
               cursor: 'pointer',
               marginTop: '10px',
-              color: '#2563eb',
-              fontWeight: '500'
+              color: 'blue'
             }}
           >
             {s.options} options available
@@ -149,12 +204,8 @@ export default function Dashboard() {
           {expanded === i && s.allOptions && (
             <div style={{ marginTop: '10px' }}>
               {s.allOptions.map((o, j) => (
-                <div key={j} style={{
-                  fontSize: '14px',
-                  color: '#111',
-                  padding: '4px 0'
-                }}>
-                  {o.supplier} — {'$' + o.price}
+                <div key={j}>
+                  {o.supplier} — $ {o.price}
                 </div>
               ))}
             </div>
@@ -166,3 +217,6 @@ export default function Dashboard() {
     </div>
   )
 }
+
+
+
