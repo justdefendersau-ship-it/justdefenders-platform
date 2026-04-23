@@ -1,0 +1,187 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+/* ===================== HELP TOOLTIP ===================== */
+function HelpTooltip({text}:{text:string}) {
+  return (
+    <span title={text} style={{marginLeft:"6px", cursor:"help", color:"#2563eb", fontWeight:700}}>
+      ?
+    </span>
+  );
+}
+
+/* ===================== DISTANCE ===================== */
+function getDistanceKm(lat1:number, lon1:number, lat2:number, lon2:number) {
+  const R = 6371;
+  const dLat = (lat2-lat1) * Math.PI/180;
+  const dLon = (lon2-lon1) * Math.PI/180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1*Math.PI/180) * Math.cos(lat2*Math.PI/180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  return R * (2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a)));
+}
+
+/* ===================== SCORING ===================== */
+function scorePart(p:any) {
+  const price = p.price || 9999;
+  const delivery = p.deliveryDays || 5;
+  const distance = p.distanceKm || 500;
+  const reliability = 0.9;
+
+  return Math.round(
+    price * 0.6 +
+    delivery * 15 +
+    distance * 0.5 +
+    (1 - reliability) * 200
+  );
+}
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [international, setInternational] = useState(false);
+  const [used, setUsed] = useState(false);
+  const [showCompatible, setShowCompatible] = useState(true);
+  const [showUpgrades, setShowUpgrades] = useState(true);
+  const [cheapestOnly, setCheapestOnly] = useState(false);
+
+  const [userLocation, setUserLocation] = useState<any>(null);
+
+  async function search() {
+
+    const res = await fetch('/api/parts?q=' + query);
+    const json = await res.json();
+
+    const scored = json.results.map((r:any) => {
+
+      let distanceKm = 500;
+
+      if (userLocation && r.location) {
+        distanceKm = getDistanceKm(
+          userLocation.lat,
+          userLocation.lng,
+          r.location.lat,
+          r.location.lng
+        );
+      }
+
+      return {
+        ...r,
+        distanceKm,
+        score: scorePart({ ...r, distanceKm })
+      };
+    });
+
+    const minPrice = Math.min(...scored.map((r:any)=>r.price));
+    const minScore = Math.min(...scored.map((r:any)=>r.score));
+
+    const labelled = scored.map((r:any)=>({
+      ...r,
+      label: [
+        r.price === minPrice ? "CHEAPEST" : null,
+        r.score === minScore ? "RECOMMENDED" : null,
+        r.score <= minScore * 1.05 ? "BEST VALUE" : null
+      ].filter(Boolean)
+    }));
+
+    setData({results: labelled});
+  }
+
+  useEffect(()=>{
+    search();
+
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((pos)=>{
+        setUserLocation({
+          lat: pos.coords.latitude,
+          lng: pos.coords.longitude
+        });
+      });
+    }
+  },[]);
+
+  return (
+    <div style={{background:"#e5e7eb", minHeight:"100vh", padding:"30px", color:"#111827"}}>
+
+      <div style={{
+        background:"#111827",
+        padding:"20px",
+        borderRadius:"12px",
+        color:"#9ca3af",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px"
+      }}>
+        JustDefenders © Command Centre
+      </div>
+
+      <div style={{
+        background:"#fff",
+        padding:"20px",
+        borderRadius:"12px",
+        marginBottom:"20px"
+      }}>
+
+        <input value={query} onChange={(e)=>setQuery(e.target.value)} placeholder="Search parts" />
+        <button onClick={search}>Search</button>
+
+        {/* FILTERS */}
+        <div style={{marginTop:"10px"}}>
+
+          <label>
+            <input type="checkbox" checked={international} onChange={()=>setInternational(!international)} />
+            International <HelpTooltip text="Include overseas suppliers" />
+          </label>
+
+          <label style={{marginLeft:"10px"}}>
+            <input type="checkbox" checked={used} onChange={()=>setUsed(!used)} />
+            Used <HelpTooltip text="Include second-hand parts" />
+          </label>
+
+        </div>
+
+      </div>
+
+      {data?.results?.map((s:any,i:number)=>(
+        <div key={i} style={{background:"#fff", padding:"15px", marginBottom:"10px"}}>
+
+          <strong>{s.supplier}</strong>
+
+          {Array.isArray(s.label) && s.label.map((l,i)=>(
+            <span key={i} style={{
+              marginLeft:"6px",
+              padding:"4px 8px",
+              background: l==="CHEAPEST" ? "#2563eb" : "#16a34a",
+              color:"#fff",
+              borderRadius:"6px",
+              fontSize:"11px"
+            }}>
+              {l}
+            </span>
+          ))}
+
+          <div>{s.partNumber}</div>
+          <div>${s.price}</div>
+
+          {s.distanceKm && (
+            <div style={{fontSize:"12px"}}>
+              Distance: {Math.round(s.distanceKm)} km
+            </div>
+          )}
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

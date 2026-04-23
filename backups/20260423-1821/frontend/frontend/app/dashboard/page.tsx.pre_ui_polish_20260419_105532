@@ -1,0 +1,157 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [showUsed, setShowUsed] = useState(false);
+  const [showInternational, setShowInternational] = useState(false);
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  function getStockStatus() {
+    const rand = Math.random();
+    if (rand > 0.6) return { label: "In Stock", color: "#16a34a" };
+    if (rand > 0.3) return { label: "Low Stock", color: "#f59e0b" };
+    return { label: "Out of Stock", color: "#dc2626" };
+  }
+
+  function scorePart(price:number, stockLabel:string) {
+    let score = 1000 - price;
+    if (stockLabel === "In Stock") score += 500;
+    if (stockLabel === "Low Stock") score += 200;
+    if (stockLabel === "Out of Stock") score -= 500;
+    return score;
+  }
+
+  function enrich(results:any[]) {
+    return results.map((s:any) => {
+      const stock = getStockStatus();
+      const score = scorePart(s.price, stock.label);
+      return { ...s, stock, score };
+    }).sort((a,b)=> b.score - a.score);
+  }
+
+  return (
+    <div style={{
+      padding:"30px",
+      maxWidth:"1100px",
+      margin:"0 auto",
+      background:"#ffffff",
+      minHeight:"100vh"
+    }}>
+
+      <h1 style={{ fontSize:"26px", fontWeight:800 }}>
+        JustDefenders Command Centre
+      </h1>
+
+      {/* VIN SECTION */}
+      <div style={{ marginTop:"15px" }}>
+        <input
+          placeholder="Enter VIN"
+          value={vinInput}
+          onChange={(e)=>setVinInput(e.target.value)}
+          style={{ padding:"6px", marginRight:"6px" }}
+        />
+        <button onClick={()=>{
+          if (vinInput) setVins([...vins, vinInput]);
+          setVinInput("");
+        }}>
+          Add VIN
+        </button>
+      </div>
+
+      <div style={{ marginTop:"10px" }}>
+        {vins.map((v,i)=>(
+          <span key={i} style={{
+            display:"inline-block",
+            marginRight:"8px",
+            background:"#e5e7eb",
+            padding:"6px 10px",
+            borderRadius:"10px",
+            fontWeight:700
+          }}>
+            {v}
+            <span
+              onClick={()=>setVins(vins.filter(x=>x!==v))}
+              style={{ marginLeft:"6px", cursor:"pointer", color:"#dc2626" }}
+            >
+              x
+            </span>
+          </span>
+        ))}
+      </div>
+
+      {/* FILTERS */}
+      <div style={{ marginTop:"15px" }}>
+        <label style={{ marginRight:"10px" }}>
+          <input type="checkbox" checked={showUsed} onChange={()=>setShowUsed(!showUsed)} />
+          Used Parts
+        </label>
+
+        <label>
+          <input type="checkbox" checked={showInternational} onChange={()=>setShowInternational(!showInternational)} />
+          International
+        </label>
+      </div>
+
+      {/* SEARCH */}
+      <div style={{ marginTop:"15px" }}>
+        <input
+          value={query}
+          onChange={(e)=>setQuery(e.target.value)}
+          style={{ padding:"6px", marginRight:"6px" }}
+        />
+        <button onClick={search}>Search</button>
+      </div>
+
+      {/* RESULTS */}
+      <div style={{ marginTop:"20px" }}>
+        {enrich(data?.results || []).map((s:any,i:number)=>(
+          <div key={i} style={{
+            border:"1px solid #ddd",
+            borderRadius:"10px",
+            padding:"12px",
+            marginBottom:"10px",
+            background:"#fafafa"
+          }}>
+
+            <div style={{ fontWeight:700 }}>
+              {s.supplier}
+            </div>
+
+            <div>{s.partNumber}</div>
+
+            <div style={{ fontWeight:800, fontSize:"18px" }}>
+              ${s.price}
+            </div>
+
+            <div style={{ color:s.stock.color, fontWeight:700 }}>
+              {s.stock.label}
+            </div>
+
+            {i === 0 && (
+              <div style={{ color:"#7c3aed", fontWeight:800 }}>
+                RECOMMENDED
+              </div>
+            )}
+
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}

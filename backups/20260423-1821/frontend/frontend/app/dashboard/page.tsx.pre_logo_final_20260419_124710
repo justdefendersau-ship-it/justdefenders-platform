@@ -1,0 +1,288 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+const supplierLogos:any = {
+  "Repco": "/logos/repco.svg",
+  "Supercheap Auto": "/logos/supercheap.svg",
+  "eBay": "/logos/ebay.svg",
+  "JLR": "/logos/jlr.svg"
+};
+
+
+
+
+
+
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [filters, setFilters] = useState({
+  used: false,
+  international: false,
+  oem: false,
+  aftermarket: false,
+  inStock: false,
+  bestDeal: false,
+});
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  function getStockStatus() {
+    const r = Math.random();
+    if (r > 0.6) return { label: "In Stock", color: "#16a34a" };
+    if (r > 0.3) return { label: "Low Stock", color: "#f59e0b" };
+    return { label: "Out of Stock", color: "#dc2626" };
+  }
+
+  function scorePart(price: number, stock: string) {
+    let score = 1000 - price;
+    if (stock === "In Stock") score += 500;
+    if (stock === "Low Stock") score += 200;
+    if (stock === "Out of Stock") score -= 500;
+    return score;
+  }
+
+  function enrich(results: any[]) {
+    return results
+      .map((s) => {
+        const stock = getStockStatus();
+        const score = scorePart(s.price, stock.label);
+        return { ...s, stock, score };
+      })
+      .sort((a, b) => b.score - a.score);
+  }
+
+  return (
+    <div style={{ background: "#0f172a", minHeight: "100vh", padding: "30px" }}>
+      <div
+        style={{
+          maxWidth: "1100px",
+          margin: "0 auto",
+          background: "#111827",
+          padding: "25px",
+          borderRadius: "12px",
+          color: "#e5e7eb",
+        }}
+      >
+        {/* HEADER */}
+        <h1 style={{ fontSize: "26px", fontWeight: 800, color: "#9ca3af" }}>
+          JustDefenders Command Centre
+        </h1>
+
+        {/* VIN INPUT */}
+        <div style={{ marginTop: "15px" }}>
+          <input
+            value={vinInput}
+            onChange={(e) => setVinInput(e.target.value)}
+            placeholder="Enter VIN"
+            style={{
+              padding: "8px",
+              borderRadius: "6px",
+              border: "1px solid #374151",
+              marginRight: "8px",
+              background: "#1f2933",
+              color: "#fff",
+            }}
+          />
+
+          <button
+            style={{
+              background: "#16a34a",
+              color: "#fff",
+              padding: "8px 12px",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onClick={() => {
+              if (vinInput) setVins([...vins, vinInput]);
+              setVinInput("");
+            }}
+          >
+            Add VIN
+          </button>
+        </div>
+
+        {/* VIN CHIPS */}
+<div style={{ marginTop: "10px" }}>
+  {vins.map((v, i) => (
+    <span
+      key={i}
+      onClick={() => setActiveVin(v)}
+      style={{
+        background: v === activeVin ? "#16a34a" : "#374151",
+        color: "#fff",
+        padding: "6px 10px",
+        borderRadius: "10px",
+        marginRight: "8px",
+        fontWeight: 700,
+        cursor: "pointer"
+      }}
+    >
+      {v}
+      <span
+        onClick={(e) => {
+          e.stopPropagation();
+          setVins(vins.filter(x => x !== v));
+          if (activeVin === v) setActiveVin(null);
+        }}
+        style={{ marginLeft: "6px", cursor: "pointer" }}
+      >
+        ×
+      </span>
+    </span>
+  ))}
+</div>
+
+        {/* FILTERS */}
+<div style={{ marginTop: "15px", display: "flex", flexWrap: "wrap", gap: "12px" }}>
+
+  <label>
+    <input type="checkbox" checked={filters.used}
+      onChange={() => setFilters({ ...filters, used: !filters.used })} />
+    {" "}Used
+  </label>
+
+  <label>
+    <input type="checkbox" checked={filters.international}
+      onChange={() => setFilters({ ...filters, international: !filters.international })} />
+    {" "}International
+  </label>
+
+  <label>
+    <input type="checkbox" checked={filters.oem}
+      onChange={() => setFilters({ ...filters, oem: !filters.oem })} />
+    {" "}OEM
+  </label>
+
+  <label>
+    <input type="checkbox" checked={filters.aftermarket}
+      onChange={() => setFilters({ ...filters, aftermarket: !filters.aftermarket })} />
+    {" "}Aftermarket
+  </label>
+
+  <label>
+    <input type="checkbox" checked={filters.inStock}
+      onChange={() => setFilters({ ...filters, inStock: !filters.inStock })} />
+    {" "}In Stock Only
+  </label>
+
+  <label>
+    <input type="checkbox" checked={filters.bestDeal}
+      onChange={() => setFilters({ ...filters, bestDeal: !filters.bestDeal })} />
+    {" "}Best Deals
+  </label>
+
+</div>
+
+        {/* SEARCH */}
+        <div style={{ marginTop: "15px" }}>
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{
+              padding: "8px",
+              borderRadius: "6px",
+              border: "1px solid #374151",
+              marginRight: "8px",
+              background: "#1f2933",
+              color: "#fff",
+            }}
+          />
+
+          <button
+            style={{
+              background: "#2563eb",
+              color: "#fff",
+              padding: "8px 12px",
+              borderRadius: "6px",
+              border: "none",
+              cursor: "pointer",
+            }}
+            onClick={search}
+          >
+            Search
+          </button>
+        </div>
+
+        {/* RESULTS */}
+        <div style={{ marginTop: "20px" }}>
+          {enrich(data?.results || []).map((s, i) => (
+            <div
+              key={i}
+              style={{
+                background: "#1f2937",
+                padding: "15px",
+                borderRadius: "10px",
+                marginBottom: "10px",
+                boxShadow: "0 4px 10px rgba(0,0,0,0.4)",
+              }}
+            >
+              <div style={{ fontWeight: 700 }}><div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+  <img 
+    src={supplierLogos[s.supplier] || "/logos/ebay.svg"} 
+    style={{ width:"20px", height:"20px" }} 
+  />
+  <span><div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+  <img 
+    src={supplierLogos[s.supplier] || "/logos/ebay.svg"} 
+    style={{ width:"20px", height:"20px" }} 
+  />
+  <span>{s.supplier}</span>
+</div></span>
+</div></div>
+              <div>{s.partNumber}</div>
+              <div style={{ fontSize: "18px", fontWeight: 800 }}>
+                ${s.price}
+
+<div style={{ fontSize:"12px", color:"#9ca3af" }}>
+  Score: {s.score}
+</div>
+              </div>
+
+              <div style={{ color: s.stock.color }}>
+                {s.stock.label}
+              </div>
+
+              {s.score > 1200 && (
+  <div style={{
+    marginTop:"6px",
+    background:"#facc15",
+    color:"#000",
+    padding:"4px 8px",
+    borderRadius:"6px",
+    fontSize:"12px",
+    fontWeight:800,
+    display:"inline-block"
+  }}>
+    BEST DEAL
+  </div>
+)}
+
+{i === 0 && (
+                <div style={{ color: "#a78bfa", fontWeight: 800 }}>
+                  RECOMMENDED
+                </div>
+              )}
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}

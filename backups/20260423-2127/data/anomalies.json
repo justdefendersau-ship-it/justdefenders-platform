@@ -1,0 +1,23 @@
+[
+  {
+    "part": "ERR5009",
+    "supplier": "Repco",
+    "price": 217,
+    "avg": 143.8,
+    "spike": 0.50904033379694
+  },
+  {
+    "part": "NRC9448",
+    "supplier": "Repco",
+    "price": 175,
+    "avg": 117,
+    "spike": 0.49572649572649574
+  },
+  {
+    "part": "NRC9448",
+    "supplier": "Britpart",
+    "price": 213,
+    "avg": 108,
+    "spike": 0.9722222222222222
+  }
+]

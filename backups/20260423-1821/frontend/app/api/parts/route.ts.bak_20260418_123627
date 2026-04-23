@@ -1,0 +1,150 @@
+import { NextResponse } from "next/server";
+import { getCompatibleParts, getUpgrades } from "../../../lib/compatibility";
+
+export async function GET(req: Request) {
+
+  const { searchParams } = new URL(req.url);
+  const query = searchParams.get("q") || "";
+  const vin = searchParams.get("vin") || "";
+
+  // ----------------------------------------------------------------------------------
+  // BASE SUPPLIERS (WORKING DATA)
+  // ----------------------------------------------------------------------------------
+
+  const results = [
+    {
+      supplier: "4WD Industries",
+      partNumber: "LR123",
+      price: 280,
+      type: "physical",
+      location: { lat: -33.8, lng: 151.2 },
+      deliveryDays: 2
+    },
+    {
+      supplier: "Landybitz",
+      partNumber: "LR123",
+      price: 320,
+      type: "hybrid",
+      location: { lat: -27.5, lng: 153.0 },
+      deliveryDays: 3
+    },
+    {
+      supplier: "British Auto Parts",
+      partNumber: "LR123",
+      price: 290,
+      type: "hybrid",
+      location: { lat: -27.6, lng: 152.9 },
+      deliveryDays: 4
+    },
+    {
+      supplier: "LR Partshop",
+      partNumber: "LR123",
+      price: 330,
+      type: "online",
+      location: null,
+      deliveryDays: 5
+    }
+  ];
+
+  // ----------------------------------------------------------------------------------
+  // MEMBER PRICING
+  // ----------------------------------------------------------------------------------
+
+  const memberDiscounts:any = {
+    "4WD Industries": 0.05,
+    "Landybitz": 0.07
+  };
+
+  const enriched = results.map(r => {
+
+    const discount = memberDiscounts[r.supplier];
+    let memberPrice = null;
+
+    if (discount) {
+      memberPrice = Math.round(r.price * (1 - discount));
+    }
+
+    return {
+      ...r,
+      memberPrice
+    };
+  });
+
+  // ----------------------------------------------------------------------------------
+  // SCORING
+  // ----------------------------------------------------------------------------------
+
+  function calculateScore(item:any) {
+
+    const price = item.memberPrice || item.price;
+    const priceScore = (1 / price) * 10000;
+
+    const speedScore = item.deliveryDays ? (10 - item.deliveryDays) * 5 : 0;
+
+    const discountBonus = item.memberPrice ? 20 : 0;
+
+    return Math.round(priceScore + speedScore + discountBonus);
+  }
+
+  const scored = enriched.map(r => ({
+    ...r,
+    score: calculateScore(r)
+  }));
+
+  const bestScore = Math.max(...scored.map(r => r.score));
+  const cheapest = Math.min(...scored.map(r => r.memberPrice || r.price));
+
+  const final = scored.map(r => {
+
+    let label = null;
+
+    if (r.score === bestScore) label = "BEST VALUE";
+    else if ((r.memberPrice || r.price) === cheapest) label = "CHEAPEST";
+    else if (r.deliveryDays <= 2) label = "FASTEST";
+
+    return {
+      ...r,
+      label
+    };
+  });
+
+  
+
+const grouped = final.map((r:any) => {
+
+  const compatible = getCompatibleParts(r.partNumber).map((c:any) => ({
+    ...c,
+    price: Math.round(r.price * 0.9),
+    type: "compatible"
+  }));
+
+  const upgrades = getUpgrades(r.partNumber).map((u:any) => ({
+    ...u,
+    price: Math.round(r.price * 1.4),
+    type: "upgrade"
+  }));
+
+  return {
+    ...r,
+    compatible,
+    upgrades
+  };
+});
+
+
+  const upgrades = getUpgrades(r.partNumber).map((u:any) => ({
+    ...u,
+    price: Math.round(r.price * 1.4),
+    type: "upgrade",
+    baseSupplier: r.supplier
+  }));
+
+  return [r, ...compatible, ...upgrades];
+});
+
+return NextResponse.json({
+  query,
+  vin,
+  results: grouped
+});
+}

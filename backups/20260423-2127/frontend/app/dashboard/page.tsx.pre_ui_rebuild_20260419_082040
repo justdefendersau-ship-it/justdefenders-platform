@@ -1,0 +1,105 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  return (
+    <div style={{
+      background: "#e5e7eb",
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      padding: "30px"
+    }}>
+
+      <div style={{ width: "100%", maxWidth: "1100px" }}>
+
+        {/* HEADER */}
+        <div style={{
+          background: "#111827",
+          padding: "20px",
+          borderRadius: "12px",
+          color: "#d1d5db",
+          fontSize: "26px",
+          fontWeight: 800,
+          marginBottom: "25px"
+        }}>
+          JustDefenders © Command Centre
+        </div>
+
+        {/* CONTROL PANEL */}
+        <div style={{
+          background: "#ffffff",
+          padding: "20px",
+          borderRadius: "12px",
+          marginBottom: "20px"
+        }}>
+
+          {/* VIN */}
+          <input
+            placeholder="Enter VIN"
+            value={vinInput}
+            onChange={(e) => setVinInput(e.target.value.toUpperCase())}
+          />
+
+          <button onClick={() => {
+            if (!vinInput) return;
+            if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+            setVinInput("");
+          }}>
+            Add
+          </button>
+
+          {/* VIN LIST */}
+          <div style={{ marginTop: "10px" }}>
+            {vins.map((v, i) => (
+              <div key={i}>{v}</div>
+            ))}
+          </div>
+
+          {/* SEARCH */}
+          <input
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            style={{ marginTop: "10px" }}
+          />
+
+          <button onClick={search}>Search</button>
+
+        </div>
+
+        {/* RESULTS */}
+        {data?.results?.map((s: any, i: number) => (
+          <div key={i} style={{
+            background: "#ffffff",
+            padding: "15px",
+            marginBottom: "10px",
+            borderRadius: "10px"
+          }}>
+            <div style={{ fontWeight: 700 }}>{s.supplier}</div>
+            <div>{s.partNumber}</div>
+            <div style={{ fontWeight: 800 }}>${s.price}</div>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+}

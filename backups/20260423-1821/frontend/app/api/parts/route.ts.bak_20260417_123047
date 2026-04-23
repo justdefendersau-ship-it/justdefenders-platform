@@ -1,0 +1,108 @@
+﻿import { NextResponse } from "next/server";
+
+// --------------------------------------------------------------------------------
+// VIN DECODER (CLEAN + SAFE)
+// --------------------------------------------------------------------------------
+function decodeVin(vin: string) {
+
+  if (!vin || vin.length < 17) {
+    return { model: "Defender", engine: "Unknown", year: "Unknown" };
+  }
+
+  const yearMap: any = {
+    A:2010, B:2011, C:2012, D:2013,
+    E:2014, F:2015, G:2016
+  };
+
+  const year = yearMap[vin[9]] || "Unknown";
+
+  let model = "Defender";
+  const section = vin.substring(3,6);
+
+  if (section === "LDH") model = "Defender 90";
+  else if (section === "LDW") model = "Defender 110";
+  else if (section === "LDV") model = "Defender 130";
+
+  let engine = "Unknown";
+  if (year !== "Unknown") {
+    if (year <= 2011) engine = "Puma 2.4";
+    else engine = "Puma 2.2";
+  }
+
+  return {
+    model,
+    engine,
+    year
+  };
+}
+
+// --------------------------------------------------------------------------------
+// API
+// --------------------------------------------------------------------------------
+export async function GET(req: Request) {
+
+  try {
+
+    const { searchParams } = new URL(req.url);
+
+    const vin = searchParams.get("vin") || "";
+    const q = (searchParams.get("q") || "").toUpperCase();
+    const domestic = searchParams.get("domestic") === "true";
+    const used = searchParams.get("used") === "true";
+
+    const vehicle = decodeVin(vin);
+
+    let suppliers = [
+  { name: "Supercheap Auto", price: 32, type: "physical", delivery: "Fast", stock: "In Stock", reliability: 92 },
+  { name: "Repco", price: 35, type: "physical", delivery: "Fast", stock: "Limited", reliability: 88 },
+  { name: "JLR Classic", price: 49, type: "online", delivery: "Medium", stock: "In Stock", reliability: 95 },
+  { name: "eBay", price: 25, type: "online", delivery: "Slow", stock: "Varies", reliability: 70 }
+];
+
+    if (domestic) suppliers = suppliers.filter(s => s.type === "physical");
+    if (used) suppliers = suppliers.filter(s => s.type === "online");
+
+    const partNumber = q && q.length > 0 ? q : "ERR3340";
+
+    let best: any = null;
+
+    const results = suppliers.map(s => {
+
+      const item = {
+  partNumber,
+  totalAUD: s.price,
+  score: 100 - s.price,
+  delivery: s.delivery,
+  stock: s.stock,
+  reliability: s.reliability
+};
+
+      if (!best || item.score > best.score) {
+        best = { ...item, supplier: s.name };
+      }
+
+      return {
+        supplier: s.name,
+        type: s.type,
+        items: [item]
+      };
+    });
+
+    return NextResponse.json({
+      vehicle,
+      results,
+      best
+    });
+
+  } catch (err) {
+
+    return NextResponse.json({
+      vehicle: { model: "Error", engine: "Error", year: "Error" },
+      results: [],
+      best: null
+    });
+
+  }
+}
+
+

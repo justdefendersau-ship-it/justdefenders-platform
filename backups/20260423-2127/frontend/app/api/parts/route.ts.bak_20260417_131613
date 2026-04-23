@@ -1,0 +1,190 @@
+//
+// Timestamp: 17 April 2026 15:10
+// JustDefenders ©
+// File: /app/api/parts/route.ts
+//
+
+import { NextResponse } from 'next/server'
+
+export async function GET(req) {
+
+  const { searchParams } = new URL(req.url)
+
+  const query = searchParams.get('q')
+  const vin   = searchParams.get('vin')
+
+  console.log("🔍 Parts search:", query, "VIN:", vin)
+
+  // ------------------------------------------------------------------
+  // MOCK PARTS
+  // ------------------------------------------------------------------
+
+  let results = [
+    {
+      partNumber: "LR123",
+      supplier: "AutoParts Co",
+      price: 320,
+      deliveryDays: 3
+    },
+    {
+      partNumber: "LR123",
+      supplier: "FastParts",
+      price: 295,
+      deliveryDays: 5
+    }
+  ]
+
+  // ------------------------------------------------------------------
+  // 🧠 INTELLIGENCE LAYER
+  // ------------------------------------------------------------------
+
+  let intelligence = null
+
+  try {
+    if (vin) {
+      const res = await fetch(`http://localhost:8081/api/vehicle/${vin}`)
+      intelligence = await res.json()
+      console.log("🧠 Intelligence received:", intelligence.status)
+    }
+  } catch (err) {
+    console.log("⚠️ Intelligence unavailable")
+  }
+
+  // ------------------------------------------------------------------
+  // 🧠 SUPPLIER INTELLIGENCE ENGINE
+  // ------------------------------------------------------------------
+
+  let supplierStats = {}
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+
+    const logPath = path.join(process.cwd(), 'data', 'search_logs.json')
+
+    if (fs.existsSync(logPath)) {
+
+      const logs = JSON.parse(fs.readFileSync(logPath, 'utf-8'))
+
+      logs.forEach(entry => {
+        entry.results.forEach(r => {
+
+          if (!supplierStats[r.supplier]) {
+            supplierStats[r.supplier] = {
+              count: 0,
+              totalDelivery: 0,
+              deliveries: []
+            }
+          }
+
+          supplierStats[r.supplier].count += 1
+          supplierStats[r.supplier].totalDelivery += r.deliveryDays
+          supplierStats[r.supplier].deliveries.push(r.deliveryDays)
+        })
+      })
+
+      Object.keys(supplierStats).forEach(s => {
+
+        const stat = supplierStats[s]
+
+        stat.avgDelivery = stat.totalDelivery / stat.count
+
+        // Consistency (lower variance = better)
+        const mean = stat.avgDelivery
+        const variance = stat.deliveries.reduce((acc, d) => acc + Math.pow(d - mean, 2), 0) / stat.deliveries.length
+        const consistency = 1 / (1 + variance)
+
+        // Normalised frequency
+        const maxCount = Math.max(...Object.values(supplierStats).map(x => x.count))
+        const frequencyScore = stat.count / maxCount
+
+        // FINAL RELIABILITY SCORE
+        stat.reliabilityScore =
+          (0.4 * frequencyScore) +
+          (0.4 * (1 / stat.avgDelivery)) +
+          (0.2 * consistency)
+      })
+
+      console.log("🧠 Reliability engine calculated")
+
+    }
+
+  } catch (err) {
+    console.log("⚠️ Supplier intelligence failed:", err.message)
+  }
+
+  // ------------------------------------------------------------------
+  // 🧠 APPLY INTELLIGENCE
+  // ------------------------------------------------------------------
+
+  if (intelligence && intelligence.scoring) {
+
+    results = results.map(p => {
+
+      const stats = supplierStats[p.supplier]
+
+      const avgDelivery = stats?.avgDelivery || p.deliveryDays
+      const reliability = stats?.reliabilityScore || 0.5
+
+      const score =
+        (reliability * intelligence.scoring.reliability_weight) +
+        ((1 / p.price) * 100 * intelligence.scoring.price_weight) +
+        ((1 / avgDelivery) * 10 * intelligence.scoring.delivery_weight)
+
+      return {
+        ...p,
+        avgDelivery,
+        reliability,
+        score,
+        recommended: score > 1.2   // simple recommendation flag
+      }
+    })
+
+    results.sort((a, b) => b.score - a.score)
+  }
+
+  // ------------------------------------------------------------------
+  // 📊 DATA CAPTURE
+  // ------------------------------------------------------------------
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+
+    const logPath = path.join(process.cwd(), 'data', 'search_logs.json')
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      vin: vin,
+      query: query,
+      results: results
+    }
+
+    let existing = []
+
+    if (fs.existsSync(logPath)) {
+      existing = JSON.parse(fs.readFileSync(logPath, 'utf-8'))
+    }
+
+    existing.push(logEntry)
+
+    fs.mkdirSync(path.dirname(logPath), { recursive: true })
+    fs.writeFileSync(logPath, JSON.stringify(existing, null, 2), 'utf-8')
+
+    console.log("📊 Data logged")
+
+  } catch (err) {
+    console.log("⚠️ Data capture failed:", err.message)
+  }
+
+  // ------------------------------------------------------------------
+  // RESPONSE
+  // ------------------------------------------------------------------
+
+  return NextResponse.json({
+    query,
+    vin,
+    intelligence: intelligence ? intelligence.status : "none",
+    results
+  })
+}

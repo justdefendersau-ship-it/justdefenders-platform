@@ -1,0 +1,19 @@
+﻿{
+  "NAD500210": [
+    {
+      "brand": "Bosch",
+      "partNumber": "0986017XXX",
+      "quality": "OEM Equivalent"
+    },
+    {
+      "brand": "Denso",
+      "partNumber": "DSN1200",
+      "quality": "OEM Equivalent"
+    },
+    {
+      "brand": "Generic",
+      "partNumber": "SMR500",
+      "quality": "Aftermarket"
+    }
+  ]
+}

@@ -1,0 +1,127 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+const supplierLogos:any = {
+  "Repco": "/logos/repco.svg",
+  "Supercheap Auto": "/logos/supercheap.svg",
+  "Supercheap": "/logos/supercheap.svg",
+  "eBay": "/logos/ebay.svg",
+  "Ebay": "/logos/ebay.svg",
+  "JLR": "/logos/jlr.svg",
+  "Land Rover": "/logos/jlr.svg"
+};
+
+
+
+
+
+
+
+
+
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [filters, setFilters] = useState({
+  used: false,
+  international: false,
+  oem: false,
+  aftermarket: false,
+  inStock: false,
+  bestDeal: false,
+});
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  function getStockStatus() {
+    const r = Math.random();
+    if (r > 0.6) return { label: "In Stock", color: "#16a34a" };
+    if (r > 0.3) return { label: "Low Stock", color: "#f59e0b" };
+    return { label: "Out of Stock", color: "#dc2626" };
+  }
+
+  function scorePart(price: number, stock: string) {
+    let score = 1000 - price;
+    if (stock === "In Stock") score += 500;
+    if (stock === "Low Stock") score += 200;
+    if (stock === "Out of Stock") score -= 500;
+    return score;
+  }
+
+  function enrich(results: any[]) {
+    return results
+      .map((s) => {
+        const stock = getStockStatus();
+        const score = scorePart(s.price, stock.label);
+        return { ...s, stock, score };
+      })
+      .sort((a, b) => b.score - a.score);
+  }
+
+  return (
+    <div
+  key={i}
+  style={{
+    background: "#1f2937",
+    padding: "15px",
+    borderRadius: "10px",
+    marginBottom: "10px",
+    boxShadow: "0 4px 10px rgba(0,0,0,0.4)"
+  }}
+>
+
+  <div style={{ display:"flex", alignItems:"center", gap:"8px" }}>
+    <img
+      src={supplierLogos[s.supplier] || "/logos/ebay.svg"}
+      style={{ width:"20px", height:"20px" }}
+    />
+    <span style={{ fontWeight:700 }}>{s.supplier}</span>
+  </div>
+
+  <div>{s.partNumber}</div>
+
+  <div style={{ fontSize: "18px", fontWeight: 800 }}>
+    ${s.price}
+  </div>
+
+  <div style={{ color: s.stock.color }}>
+    {s.stock.label}
+  </div>
+
+  {s.score > 1200 && (
+    <div style={{
+      marginTop:"6px",
+      background:"#facc15",
+      color:"#000",
+      padding:"4px 8px",
+      borderRadius:"6px",
+      fontSize:"12px",
+      fontWeight:800,
+      display:"inline-block"
+    }}>
+      BEST DEAL
+    </div>
+  )}
+
+</div>
+))}
+        </div>
+      </div>
+    </div>
+  );
+}

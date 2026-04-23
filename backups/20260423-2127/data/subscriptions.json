@@ -1,0 +1,11 @@
+﻿{
+  "free": {
+    "features": ["search", "fuel", "maps"]
+  },
+  "member": {
+    "features": ["search", "fuel", "maps", "build", "invoice"]
+  },
+  "premium": {
+    "features": ["all"]
+  }
+}

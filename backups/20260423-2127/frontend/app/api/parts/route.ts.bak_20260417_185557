@@ -1,0 +1,167 @@
+//
+// Timestamp: 17 April 2026 15:40
+// JustDefenders Â©
+// File: /app/api/parts/route.ts
+//
+
+import { NextResponse } from 'next/server'
+
+export async function GET(req) {
+
+  const { searchParams } = new URL(req.url)
+
+  const query = searchParams.get('q')
+  const vin   = searchParams.get('vin')
+
+  console.log("ðŸ” Parts search:", query, "VIN:", vin)
+
+  // ------------------------------------------------------------------
+  // MOCK PARTS
+  // ------------------------------------------------------------------
+
+  let results = []
+
+  // ------------------------------------------------------------------
+  // ðŸ§  INTELLIGENCE
+  // ------------------------------------------------------------------
+
+  let intelligence = null
+
+  try {
+    if (vin) {
+      const res = await fetch(`http://localhost:8081/api/vehicle/${vin}`)
+      intelligence = await res.json()
+    }
+  } catch {}
+
+  // ------------------------------------------------------------------
+  // ðŸ§  SUPPLIER + RELIABILITY ENGINE
+  // ------------------------------------------------------------------
+
+  let supplierStats = {}
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+
+    const logPath = path.join(process.cwd(), 'data', 'search_logs.json')
+
+    if (fs.existsSync(logPath)) {
+
+      const logs = JSON.parse(fs.readFileSync(logPath, 'utf-8'))
+
+      logs.forEach(entry => {
+        entry.results.forEach(r => {
+
+          if (!supplierStats[r.supplier]) {
+            supplierStats[r.supplier] = {
+              count: 0,
+              totalDelivery: 0,
+              deliveries: []
+            }
+          }
+
+          supplierStats[r.supplier].count += 1
+          supplierStats[r.supplier].totalDelivery += r.deliveryDays
+          supplierStats[r.supplier].deliveries.push(r.deliveryDays)
+        })
+      })
+
+      Object.keys(supplierStats).forEach(s => {
+
+        const stat = supplierStats[s]
+        stat.avgDelivery = stat.totalDelivery / stat.count
+
+        const mean = stat.avgDelivery
+        const variance = stat.deliveries.reduce((a, d) => a + Math.pow(d - mean, 2), 0) / stat.deliveries.length
+        const consistency = 1 / (1 + variance)
+
+        const maxCount = Math.max(...Object.values(supplierStats).map(x => x.count))
+        const frequency = stat.count / maxCount
+
+        stat.reliabilityScore =
+          (0.4 * frequency) +
+          (0.4 * (1 / stat.avgDelivery)) +
+          (0.2 * consistency)
+      })
+    }
+
+  } catch {}
+
+  // ------------------------------------------------------------------
+  // ðŸ§  APPLY INTELLIGENCE
+  // ------------------------------------------------------------------
+
+  if (intelligence && intelligence.scoring) {
+
+    results = results.map(p => {
+
+      const stats = supplierStats[p.supplier]
+
+      const avgDelivery = stats?.avgDelivery || p.deliveryDays
+      const reliability = stats?.reliabilityScore || 0.5
+
+      const score =
+        (reliability * intelligence.scoring.reliability_weight) +
+        ((1 / p.price) * 100 * intelligence.scoring.price_weight) +
+        ((1 / avgDelivery) * 10 * intelligence.scoring.delivery_weight)
+
+      return {
+        ...p,
+        avgDelivery,
+        reliability,
+        score
+      }
+    })
+
+    results.sort((a, b) => b.score - a.score)
+
+    // âœ… BEST OPTION FLAG (STRONGER)
+    if (results.length > 0) {
+      results[0].bestOption = true
+    }
+  }
+
+  // ------------------------------------------------------------------
+  // ðŸ“Š DATA CAPTURE (ENHANCED)
+  // ------------------------------------------------------------------
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+
+    const logPath = path.join(process.cwd(), 'data', 'search_logs.json')
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      vin,
+      query,
+      results,
+      selectedSupplier: null,     // future UI hook
+      outcome: null               // future success/failure
+    }
+
+    let existing = []
+
+    if (fs.existsSync(logPath)) {
+      existing = JSON.parse(fs.readFileSync(logPath, 'utf-8'))
+    }
+
+    existing.push(logEntry)
+
+    fs.mkdirSync(path.dirname(logPath), { recursive: true })
+    fs.writeFileSync(logPath, JSON.stringify(existing, null, 2), 'utf-8')
+
+  } catch {}
+
+  // ------------------------------------------------------------------
+  // RESPONSE
+  // ------------------------------------------------------------------
+
+  return NextResponse.json({
+    query,
+    vin,
+    intelligence: intelligence ? intelligence.status : "none",
+    results
+  })
+}

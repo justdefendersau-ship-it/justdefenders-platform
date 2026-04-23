@@ -1,0 +1,208 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+
+  const [international, setInternational] = useState(false);
+  const [used, setUsed] = useState(false);
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  return (
+    <div style={{
+      background: "#e5e7eb",
+      minHeight: "100vh",
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "flex-start"
+    }}>
+
+      <div style={{
+        width: "100%",
+        maxWidth:"1100px", margin:"0 auto",
+        padding: "30px"
+      }}>
+
+        {/* HEADER */}
+        <div style={{
+          background: "#111827",
+          padding: "20px",
+          borderRadius: "12px",
+          color: "#f9fafb",
+          fontSize: "26px",
+          fontWeight:900,
+          marginBottom: "25px",
+          boxShadow: "0 10px 30px rgba(0,0,0,0.4)"
+        }}>
+          JustDefenders © Command Centre
+        </div>
+
+        {/* CONTROL PANEL */}
+        <div style={{
+          background: "#ffffff",
+          padding: "20px",
+          borderRadius: "12px",
+          marginBottom: "20px",
+          boxShadow: "0 10px 25px rgba(0,0,0,0.1)"
+        }}>
+
+          {/* VIN */}
+          <div style={{ marginBottom: "10px" }}>
+            <input
+              placeholder="Enter VIN"
+              value={vinInput}
+              onChange={(e) => setVinInput(e.target.value.toUpperCase())}
+              style={{
+                padding: "8px",
+                border: "1px solid #ccc",
+                borderRadius: "6px"
+              }}
+            />
+
+            <button style={{
+              marginLeft: "8px",
+              background: "#16a34a",
+              color: "#fff",
+              padding: "8px 14px",
+              borderRadius: "6px",
+              fontWeight: 600
+            }} onClick={() => {
+              if (!vinInput) return;
+              if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+              setVinInput("");
+            }}>
+              Add
+            </button>
+          </div>
+
+          {/* VIN LIST */}
+          <div style={{ marginBottom: "10px" }}>
+            {vins.map((v, i) => (
+  <span key={i} style={{
+    marginRight:"8px",
+    padding:"6px 10px",
+    background:"#e5e7eb",
+    borderRadius:"12px",
+    fontWeight:700,
+    color:"#111827"
+  }}>
+    {v}
+    <span
+      onClick={() => setVins(vins.filter(x => x !== v))}
+      style={{
+        marginLeft:"6px",
+        color:"#dc2626",
+        cursor:"pointer",
+        fontWeight:900
+      }}
+    >
+      ×
+    </span>
+  </span>
+))}
+          </div>
+
+          {/* SEARCH */}
+          <div>
+            <input
+              value={query}
+              onChange={(e) => setQuery(e.target.value)}
+              style={{
+                padding: "8px",
+                border: "1px solid #ccc",
+                borderRadius: "6px"
+              }}
+            />
+
+            <button style={{
+              marginLeft: "8px",
+              background: "#2563eb",
+              color: "#fff",
+              padding: "8px 16px",
+              borderRadius: "6px",
+              fontWeight: 600
+            }} onClick={search}>
+              Search
+            </button>
+          </div>
+
+          {/* FILTERS */}
+          <div style={{ marginTop: "12px", fontWeight: 600 }}>
+            <label style={{ marginRight: "12px" }}>
+              <input type="checkbox" defaultChecked /> OEM
+            </label>
+
+            <label style={{ marginRight: "12px" }}>
+              <input type="checkbox" defaultChecked /> Compatible
+            </label>
+
+            <label style={{ marginRight: "12px" }}>
+              <input type="checkbox" defaultChecked /> Upgrades
+            </label>
+
+            <label style={{ marginRight: "12px" }}>
+              <input
+                type="checkbox"
+                checked={international}
+                onChange={() => setInternational(!international)}
+              /> International
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={used}
+                onChange={() => setUsed(!used)}
+              /> Used
+            </label>
+          </div>
+
+        </div>
+
+        {/* RESULTS */}
+        {data?.results?.map((s: any, i: number) => (
+          <div key={i} style={{
+            background: "#ffffff",
+            padding: "18px",
+            marginBottom: "16px",
+            borderRadius: "12px",
+            border: "1px solid #e5e7eb",
+            boxShadow: "0 8px 20px rgba(0,0,0,0.08)"
+          }}>
+            <div style={{ fontWeight:900, color: "#111827" }}>
+              {s.supplier}
+            </div>
+
+            <div style={{ color:"#111827" }}>
+              {s.partNumber}
+            </div>
+
+            <div style={{
+              fontWeight: 900,
+              fontSize: "20px",
+              color: "#111827"
+            }}>
+              ${s.price}
+            </div>
+          </div>
+        ))}
+
+      </div>
+    </div>
+  );
+}

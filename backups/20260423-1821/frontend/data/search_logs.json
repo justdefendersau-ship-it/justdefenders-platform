@@ -1,0 +1,2334 @@
+[
+  {
+    "timestamp": "2026-04-17T02:51:17.761Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "reliability": 0.8,
+        "score": 1.3649999999999998
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "reliability": 0.6,
+        "score": 0.915593220338983
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T02:53:12.133Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "reliability": 0.8,
+        "score": 1.3649999999999998
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "reliability": 0.6,
+        "score": 0.915593220338983
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T02:57:15.733Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "reliability": 0.8,
+        "score": 1.3649999999999998
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "reliability": 0.6,
+        "score": 0.915593220338983
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T03:02:02.646Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "reliability": 0.8,
+        "score": 1.3649999999999998
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "reliability": 0.6,
+        "score": 0.915593220338983
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T03:06:45.301Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "reliability": 0.8,
+        "avgDelivery": 3,
+        "score": 1.3649999999999998
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "reliability": 0.6,
+        "avgDelivery": 5,
+        "score": 0.915593220338983
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T03:10:13.292Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "recommended": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831,
+        "recommended": false
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T03:13:11.312Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ]
+  },
+  {
+    "timestamp": "2026-04-17T03:16:40.360Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T03:38:35.410Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T05:52:19.535Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T05:55:48.603Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T05:55:59.062Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T05:56:02.004Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:09:20.721Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:16:24.742Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:16:49.926Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:25:43.655Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:27:00.650Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:28:25.281Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:30:11.236Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "ERR3400",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:30:17.057Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "ERR3400",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:30:19.864Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "ERR3400",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:30:20.652Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "ERR3400",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T06:30:20.920Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "ERR3400",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "AutoParts Co",
+        "price": 320,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3449999999999998,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "FastParts",
+        "price": 295,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9395932203389831
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T08:54:58.169Z",
+    "vin": "",
+    "query": "",
+    "results": [],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T08:55:00.927Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T08:56:20.113Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:11:56.789Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5,
+        "score": 1.792857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5,
+        "score": 1.775
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.5,
+        "score": 1.2879310344827586
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.5,
+        "score": 1.271212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.5,
+        "score": 1.0333333333333332
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.5,
+        "score": 1.0176470588235293
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.5,
+        "score": 0.8790322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.5,
+        "score": 0.8642857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:24:54.172Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.4166666666666667,
+        "score": 1.7678571428571428,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.4166666666666667,
+        "score": 1.75
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.35,
+        "score": 1.2429310344827584
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.35,
+        "score": 1.226212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.31666666666666665,
+        "score": 0.9783333333333333
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.31666666666666665,
+        "score": 0.9626470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.2966666666666667,
+        "score": 0.8180322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.2966666666666667,
+        "score": 0.8032857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:29:23.504Z",
+    "vin": "TEST123",
+    "query": "starter",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.43333333333333335,
+        "score": 1.772857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.43333333333333335,
+        "score": 1.755
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.3666666666666667,
+        "score": 1.2479310344827585
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.3666666666666667,
+        "score": 1.231212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.33333333333333337,
+        "score": 0.9833333333333334
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.33333333333333337,
+        "score": 0.9676470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.31333333333333335,
+        "score": 0.8230322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.31333333333333335,
+        "score": 0.8082857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:51:52.663Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:51:59.494Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:52:42.523Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:53:48.961Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:54:48.156Z",
+    "vin": "SALLDHA87XA176069 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5166666666666667,
+        "score": 1.7978571428571428,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5166666666666667,
+        "score": 1.78
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.45,
+        "score": 1.2729310344827587
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.45,
+        "score": 1.2562121212121211
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.4166666666666667,
+        "score": 1.0083333333333333
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.4166666666666667,
+        "score": 0.9926470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.3966666666666667,
+        "score": 0.8480322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.3966666666666667,
+        "score": 0.8332857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:54:51.815Z",
+    "vin": "SALLDHA87XA176069 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5333333333333334,
+        "score": 1.802857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.5333333333333334,
+        "score": 1.7850000000000001
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.4666666666666667,
+        "score": 1.2779310344827586
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.4666666666666667,
+        "score": 1.2612121212121212
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.43333333333333335,
+        "score": 1.0133333333333334
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.43333333333333335,
+        "score": 0.9976470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.41333333333333333,
+        "score": 0.8530322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.41333333333333333,
+        "score": 0.8382857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T10:54:54.724Z",
+    "vin": "SALLDHA87XA176069 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.55,
+        "score": 1.8078571428571428,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.55,
+        "score": 1.79
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.48333333333333334,
+        "score": 1.2829310344827585
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.48333333333333334,
+        "score": 1.2662121212121211
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.45,
+        "score": 1.0183333333333333
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.45,
+        "score": 1.0026470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.43000000000000005,
+        "score": 0.8580322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.43000000000000005,
+        "score": 0.8432857142857142
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T11:37:31.216Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T11:38:51.501Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T11:39:01.227Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T11:40:38.911Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:42:38.452Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:42:38.970Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:47:23.520Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:49:42.445Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:50:30.977Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:51:51.252Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:14.383Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:22.445Z",
+    "vin": "",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:52.334Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.7666666666666666,
+        "score": 1.8728571428571428,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.7666666666666666,
+        "score": 1.855
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7,
+        "score": 1.3479310344827584
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7,
+        "score": 1.331212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.6666666666666667,
+        "score": 1.0833333333333335
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.6666666666666667,
+        "score": 1.0676470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.6466666666666667,
+        "score": 0.923032258064516
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.6466666666666667,
+        "score": 0.9082857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:52.488Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.7833333333333334,
+        "score": 1.877857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.7833333333333334,
+        "score": 1.8599999999999999
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7166666666666668,
+        "score": 1.3529310344827585
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7166666666666668,
+        "score": 1.3362121212121212
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.6833333333333333,
+        "score": 1.0883333333333334
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.6833333333333333,
+        "score": 1.0726470588235295
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.6633333333333333,
+        "score": 0.9280322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.6633333333333333,
+        "score": 0.9132857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:55.641Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.8,
+        "score": 1.882857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.8,
+        "score": 1.865
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3579310344827586
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.341212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.7,
+        "score": 1.0933333333333333
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.7,
+        "score": 1.0776470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9330322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9182857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  },
+  {
+    "timestamp": "2026-04-17T23:52:56.347Z",
+    "vin": "SALLDHMF7TA989372 ",
+    "query": "",
+    "results": [
+      {
+        "partNumber": "LR123",
+        "supplier": "4WD Industries",
+        "price": 280,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.8,
+        "score": 1.882857142857143,
+        "bestOption": true
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Landybitz",
+        "price": 320,
+        "deliveryDays": 2,
+        "avgDelivery": 2,
+        "reliability": 0.8,
+        "score": 1.865
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Auto Parts",
+        "price": 290,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.3579310344827586
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "LR Partshop",
+        "price": 330,
+        "deliveryDays": 3,
+        "avgDelivery": 3,
+        "reliability": 0.7333333333333334,
+        "score": 1.341212121212121
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Motor Imports",
+        "price": 300,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.7,
+        "score": 1.0933333333333333
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "Rovacraft",
+        "price": 340,
+        "deliveryDays": 4,
+        "avgDelivery": 4,
+        "reliability": 0.7,
+        "score": 1.0776470588235294
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "British Off Road",
+        "price": 310,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9330322580645161
+      },
+      {
+        "partNumber": "LR123",
+        "supplier": "TR Spares",
+        "price": 350,
+        "deliveryDays": 5,
+        "avgDelivery": 5,
+        "reliability": 0.68,
+        "score": 0.9182857142857143
+      }
+    ],
+    "selectedSupplier": null,
+    "outcome": null
+  }
+]

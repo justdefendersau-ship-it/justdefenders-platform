@@ -1,0 +1,117 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+
+  async function search() {
+    const res = await fetch("/api/parts?q=" + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+  function getStockStatus() {
+    const rand = Math.random();
+    if (rand > 0.6) return { label: "In Stock", color: "#16a34a" };
+    if (rand > 0.3) return { label: "Low Stock", color: "#f59e0b" };
+    return { label: "Out of Stock", color: "#dc2626" };
+  }
+
+  function scorePart(price:number, stockLabel:string) {
+    let score = 1000 - price;
+    if (stockLabel === "In Stock") score += 500;
+    if (stockLabel === "Low Stock") score += 200;
+    if (stockLabel === "Out of Stock") score -= 500;
+    return score;
+  }
+
+  function enrich(results:any[]) {
+    return results.map((s:any) => {
+      const stock = getStockStatus();
+      const score = scorePart(s.price, stock.label);
+      return { ...s, stock, score };
+    }).sort((a,b)=> b.score - a.score);
+  }
+
+  return (
+    <div style={{ padding:"30px", maxWidth:"1100px", margin:"0 auto" }}>
+
+      <h1 style={{ fontSize:"24px", fontWeight:800 }}>
+        JustDefenders Command Centre
+      </h1>
+
+      {/* VIN INPUT */}
+      <div style={{ marginTop:"10px" }}>
+        <input
+          value={vinInput}
+          onChange={(e)=>setVinInput(e.target.value)}
+        />
+        <button onClick={()=>{
+          if (vinInput) setVins([...vins, vinInput]);
+          setVinInput("");
+        }}>Add</button>
+      </div>
+
+      {/* VIN LIST */}
+      <div style={{ marginTop:"10px" }}>
+        {vins.map((v,i)=>(
+          <span key={i} style={{ marginRight:"8px" }}>
+            {v}
+            <span onClick={()=>setVins(vins.filter(x=>x!==v))} style={{ cursor:"pointer", color:"red", marginLeft:"4px" }}>
+              x
+            </span>
+          </span>
+        ))}
+      </div>
+
+      {/* SEARCH */}
+      <div style={{ marginTop:"10px" }}>
+        <input value={query} onChange={(e)=>setQuery(e.target.value)} />
+        <button onClick={search}>Search</button>
+      </div>
+
+      {/* RESULTS */}
+      <div style={{ marginTop:"20px" }}>
+        {enrich(data?.results || []).map((s:any,i:number)=>(
+          <div key={i} style={{
+            border:"1px solid #ccc",
+            padding:"10px",
+            marginBottom:"10px"
+          }}>
+
+            <div style={{ fontWeight:700 }}>
+              {s.supplier}
+            </div>
+
+            <div>{s.partNumber}</div>
+
+            <div style={{ fontWeight:800 }}>
+              ${s.price}
+            </div>
+
+            <div style={{ color:s.stock.color }}>
+              {s.stock.label}
+            </div>
+
+            {i === 0 && (
+              <div style={{ color:"purple", fontWeight:800 }}>
+                RECOMMENDED
+              </div>
+            )}
+
+          </div>
+        ))}
+      </div>
+
+    </div>
+  );
+}

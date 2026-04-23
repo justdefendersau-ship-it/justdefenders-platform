@@ -1,0 +1,244 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+// ======================================================================================
+// TOOLTIP
+// ======================================================================================
+
+function HelpTooltip({ text }: { text: string }) {
+  return (
+    <span title={text} style={{
+      marginLeft: "6px",
+      cursor: "help",
+      fontWeight: 700,
+      color: "#6b7280"
+    }}>
+      ?
+    </span>
+  );
+}
+
+// ======================================================================================
+// LOGO MAPPING (MATCH YOUR FILES)
+// ======================================================================================
+
+function getSupplierLogo(name:string) {
+  if (!name) return "/logos/ebay.svg";
+
+  const n = name.toLowerCase();
+
+  if (n.includes("ebay")) return "/logos/ebay.svg";
+  if (n.includes("repco")) return "/logos/repco.svg";
+  if (n.includes("supercheap")) return "/logos/supercheap.svg";
+  if (n.includes("jlr") || n.includes("land rover")) return "/logos/jlr.svg";
+
+  return "/logos/ebay.svg";
+}
+
+// ======================================================================================
+// IMPROVED VIN DECODER
+// ======================================================================================
+
+function decodeVIN(vin:string) {
+
+  if (!vin || vin.length < 10) return null;
+
+  if (vin.startsWith("SALLDHMF")) return { year:"2012", model:"90", engine:"2.2 Puma" };
+  if (vin.startsWith("SALLDWBR")) return { year:"2002", model:"110", engine:"Td5" };
+  if (vin.startsWith("SALLDHA")) return { year:"1999", model:"90", engine:"Td5" };
+
+  return { year:"Unknown", model:"Defender", engine:"Unknown" };
+}
+
+// ======================================================================================
+// COMPONENT
+// ======================================================================================
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  const [international, setInternational] = useState(false);
+  const [used, setUsed] = useState(false);
+
+  async function search() {
+    const res = await fetch('/api/parts?q=' + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+
+    <div style={{
+      background:"#e5e7eb",
+      minHeight:"100vh",
+      padding:"30px",
+      display:"flex",
+      justifyContent:"center"
+    }}>
+
+      <div style={{width:"100%", maxWidth:"1100px"}}>
+
+        {/* HEADER */}
+        <div style={{
+          background:"#111827",
+          padding:"20px",
+          borderRadius:"12px",
+          color:"#d1d5db",
+          fontSize:"26px",
+          fontWeight:800,
+          marginBottom:"25px",
+          boxShadow:"0 12px 30px rgba(0,0,0,0.4)"
+        }}>
+          JustDefenders Ã‚Â© Command Centre
+        </div>
+
+        {/* CONTROL PANEL */}
+        <div style={{
+          background:"#ffffff",
+          padding:"20px",
+          borderRadius:"12px",
+          marginBottom:"20px",
+          boxShadow:"0 10px 25px rgba(0,0,0,0.08)"
+        }}>
+
+          {/* VIN */}
+          <div style={{marginBottom:"10px"}}>
+            <input
+              placeholder="Enter VIN"
+              value={vinInput}
+              onChange={(e)=>setVinInput(e.target.value.toUpperCase())}
+              style={{padding:"6px", border:"1px solid #ccc", borderRadius:"6px"}}
+            />
+
+            <button style={{
+              background:"#16a34a",
+              color:"#fff",
+              padding:"6px 12px",
+              borderRadius:"6px",
+              marginLeft:"8px"
+            }} onClick={()=>{
+              if (!vinInput) return;
+              if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+              setActiveVin(vinInput);
+              setVinInput("");
+            }}>
+              Add
+            </button>
+          </div>
+
+          {/* VIN CHIPS */}
+          <div style={{marginBottom:"10px"}}>
+            {vins.map((v,i)=>{
+              const d = decodeVIN(v);
+              return (
+                <span key={i}
+                  onClick={()=>setActiveVin(v)}
+                  style={{
+                    marginRight:"8px",
+                    padding:"6px 10px",
+                    borderRadius:"15px",
+                    cursor:"pointer",
+                    background: activeVin===v ? "#16a34a" : "#e5e7eb",
+                    color: activeVin===v ? "#fff" : "#111827",
+                    fontWeight:600
+                  }}
+                >
+                  {v} {d?.year}, {d?.model}, {d?.engine}
+                  <span onClick={(e)=>{
+                    e.stopPropagation();
+                    setVins(vins.filter(x=>x!==v));
+                  }} style={{marginLeft:"6px", color:"#ef4444"}}>
+                    Ãƒâ€”
+                  </span>
+                </span>
+              );
+            })}
+          </div>
+
+          {/* SEARCH */}
+          <div>
+            <input
+              value={query}
+              onChange={(e)=>setQuery(e.target.value)}
+              style={{padding:"6px", border:"1px solid #ccc", borderRadius:"6px"}}
+            />
+
+            <button style={{
+              background:"#2563eb",
+              color:"#fff",
+              padding:"8px 16px",
+              borderRadius:"6px",
+              marginLeft:"10px",
+              fontWeight:600
+            }} onClick={search}>
+              Search <HelpTooltip text="Search across all suppliers" />
+            </button>
+          </div>
+
+          {/* FULL FILTERS */}
+          <div style={{marginTop:"12px", fontWeight:600, color:"#111827"}}>
+            <label style={{marginRight:"12px"}}>
+              <input type="checkbox" defaultChecked /> OEM
+            </label>
+
+            <label style={{marginRight:"12px"}}>
+              <input type="checkbox" defaultChecked /> Compatible
+            </label>
+
+            <label style={{marginRight:"12px"}}>
+              <input type="checkbox" defaultChecked /> Upgrades
+            </label>
+
+            <label style={{marginRight:"12px"}}>
+              <input type="checkbox" checked={international} onChange={()=>setInternational(!international)} /> International
+            </label>
+
+            <label>
+              <input type="checkbox" checked={used} onChange={()=>setUsed(!used)} /> Used
+            </label>
+          </div>
+
+        </div>
+
+        {/* RESULTS */}
+        {data?.results?.map((s:any,i:number)=>(
+          <div key={i} style={{
+            background:"#ffffff",
+            padding:"18px",
+            marginBottom:"16px",
+            borderRadius:"12px",
+            border:"1px solid #e5e7eb",
+            boxShadow:"0 10px 25px rgba(0,0,0,0.08)"
+          }}>
+
+            <div style={{display:"flex", alignItems:"center", gap:"10px"}}>
+              <img src={getSupplierLogo(s.supplier)} style={{width:"26px"}} />
+              <div style={{fontWeight:800, color:"#111827"}}>
+                {s.supplier}
+              </div>
+            </div>
+
+            <div style={{color:"#374151", marginTop:"6px"}}>
+              {s.partNumber}
+            </div>
+
+            <div style={{fontSize:"22px", fontWeight:900, color:"#111827", marginTop:"6px"}}>
+              ${s.price}
+            </div>
+
+          </div>
+        ))}
+
+          </div>
+  </div>
+);
+}

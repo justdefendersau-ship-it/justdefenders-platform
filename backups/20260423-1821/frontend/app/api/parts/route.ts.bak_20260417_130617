@@ -1,0 +1,119 @@
+//
+// Timestamp: 17 April 2026 14:10
+// JustDefenders ©
+// File: /app/api/parts/route.ts
+//
+
+import { NextResponse } from 'next/server'
+
+export async function GET(req) {
+
+  const { searchParams } = new URL(req.url)
+
+  const query = searchParams.get('q')
+  const vin   = searchParams.get('vin')
+
+  console.log("🔍 Parts search:", query, "VIN:", vin)
+
+  // ------------------------------------------------------------------
+  // MOCK PARTS (BASELINE)
+  // ------------------------------------------------------------------
+
+  let results = [
+    {
+      partNumber: "LR123",
+      supplier: "AutoParts Co",
+      price: 320,
+      deliveryDays: 3,
+      reliability: 0.8
+    },
+    {
+      partNumber: "LR123",
+      supplier: "FastParts",
+      price: 295,
+      deliveryDays: 5,
+      reliability: 0.6
+    }
+  ]
+
+  // ------------------------------------------------------------------
+  // 🧠 INTELLIGENCE LAYER
+  // ------------------------------------------------------------------
+
+  let intelligence = null
+
+  try {
+    if (vin) {
+      const res = await fetch(`http://localhost:8081/api/vehicle/${vin}`)
+      intelligence = await res.json()
+
+      console.log("🧠 Intelligence received:", intelligence.status)
+    }
+  } catch (err) {
+    console.log("⚠️ Intelligence unavailable — fallback active")
+  }
+
+  // ------------------------------------------------------------------
+  // 🧠 APPLY INTELLIGENCE
+  // ------------------------------------------------------------------
+
+  if (intelligence && intelligence.scoring) {
+
+    results = results.map(p => ({
+      ...p,
+      score:
+        (
+          (p.reliability * intelligence.scoring.reliability_weight) +
+          ((1 / p.price) * 100 * intelligence.scoring.price_weight) +
+          ((1 / p.deliveryDays) * 10 * intelligence.scoring.delivery_weight)
+        )
+    }))
+
+    results.sort((a, b) => b.score - a.score)
+  }
+
+  // ------------------------------------------------------------------
+  // 📊 DATA CAPTURE (PHASE 3)
+  // ------------------------------------------------------------------
+
+  try {
+    const fs = require('fs')
+    const path = require('path')
+
+    const logPath = path.join(process.cwd(), 'data', 'search_logs.json')
+
+    const logEntry = {
+      timestamp: new Date().toISOString(),
+      vin: vin,
+      query: query,
+      results: results
+    }
+
+    let existing = []
+
+    if (fs.existsSync(logPath)) {
+      existing = JSON.parse(fs.readFileSync(logPath, 'utf-8'))
+    }
+
+    existing.push(logEntry)
+
+    fs.mkdirSync(path.dirname(logPath), { recursive: true })
+    fs.writeFileSync(logPath, JSON.stringify(existing, null, 2))
+
+    console.log("📊 Data logged")
+
+  } catch (err) {
+    console.log("⚠️ Data capture failed:", err.message)
+  }
+
+  // ------------------------------------------------------------------
+  // RESPONSE
+  // ------------------------------------------------------------------
+
+  return NextResponse.json({
+    query,
+    vin,
+    intelligence: intelligence ? intelligence.status : "none",
+    results
+  })
+}

@@ -1,0 +1,144 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+function Help({text}:{text:string}) {
+  return (
+    <span title={text} style={{
+      marginLeft:"6px",
+      cursor:"help",
+      color:"#2563eb",
+      fontWeight:700
+    }}>?</span>
+  );
+}
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [showOEM, setShowOEM] = useState(true);
+  const [showCompatible, setShowCompatible] = useState(true);
+  const [showUpgrades, setShowUpgrades] = useState(true);
+  const [cheapestOnly, setCheapestOnly] = useState(false);
+
+  async function search() {
+    const res = await fetch(`/api/parts?q=${query}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+    <div style={{
+      background:"#e5e7eb",
+      minHeight:"100vh",
+      padding:"30px",
+      color:"#1f2937"
+    }}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px",
+        borderRadius:"12px",
+        color:"#9ca3af",
+        fontSize:"24px",
+        fontWeight:800,
+        marginBottom:"20px"
+      }}>
+        JustDefenders Command Centre
+      </div>
+
+      {/* CONTROLS */}
+      <div style={{
+        background:"#fff",
+        padding:"20px",
+        borderRadius:"12px",
+        marginBottom:"20px"
+      }}>
+
+        {/* SEARCH */}
+        <input
+          placeholder="Search parts"
+          value={query}
+          onChange={(e)=>setQuery(e.target.value)}
+          style={{padding:"8px", marginRight:"10px"}}
+        />
+
+        <button onClick={search}>Search</button>
+
+        {/* FILTERS */}
+        <div style={{marginTop:"10px"}}>
+
+          <label>
+            <input type="checkbox" checked={showOEM} onChange={()=>setShowOEM(!showOEM)} />
+            OEM
+          </label>
+
+          <label style={{marginLeft:"10px"}}>
+            <input type="checkbox" checked={showCompatible} onChange={()=>setShowCompatible(!showCompatible)} />
+            Compatible
+          </label>
+
+          <label style={{marginLeft:"10px"}}>
+            <input type="checkbox" checked={showUpgrades} onChange={()=>setShowUpgrades(!showUpgrades)} />
+            Upgrades
+          </label>
+
+          <label style={{marginLeft:"10px"}}>
+            <input type="checkbox" checked={cheapestOnly} onChange={()=>setCheapestOnly(!cheapestOnly)} />
+            Cheapest
+          </label>
+
+          <Help text="Control what types of parts are shown" />
+
+        </div>
+
+      </div>
+
+      {/* RESULTS */}
+      {data?.results
+        ?.filter((s:any)=>{
+          if (cheapestOnly) {
+            const min = Math.min(...data.results.map((r:any)=>r.price));
+            return s.price === min;
+          }
+          return true;
+        })
+        .map((s:any,i:number)=>(
+        <div key={i} style={{
+          background:"#fff",
+          padding:"15px",
+          borderRadius:"12px",
+          marginBottom:"15px"
+        }}>
+
+          {showOEM && (
+            <>
+              <strong>{s.supplier}</strong>
+              <div>{s.partNumber}</div>
+              <div>${s.price}</div>
+            </>
+          )}
+
+          {showCompatible && s.compatible?.map((c:any,j:number)=>(
+            <div key={j}>
+              Compatible: {c.supplier} {c.partNumber}
+            </div>
+          ))}
+
+          {showUpgrades && s.upgrades?.map((u:any,j:number)=>(
+            <div key={j}>
+              Upgrade: {u.supplier} {u.partNumber}
+            </div>
+          ))}
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

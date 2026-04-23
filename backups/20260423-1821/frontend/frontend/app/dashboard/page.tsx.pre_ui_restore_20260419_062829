@@ -1,0 +1,138 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+// ======================================================================================
+// SUPPLIER LOGOS
+// ======================================================================================
+
+const supplierLogos:any = {
+  ebay: "/logos/ebay.svg",
+  jlr: "/logos/jlr.svg",
+  repco: "/logos/repco.svg",
+  supercheap: "/logos/supercheap.svg"
+};
+
+function getSupplierLogo(name:string) {
+  if (!name) return "/logos/ebay.svg";
+
+  const lower = name.toLowerCase();
+
+  if (lower.includes("ebay")) return supplierLogos.ebay;
+  if (lower.includes("jlr") || lower.includes("land rover")) return supplierLogos.jlr;
+  if (lower.includes("repco")) return supplierLogos.repco;
+  if (lower.includes("supercheap")) return supplierLogos.supercheap;
+
+  return "/logos/ebay.svg";
+}
+
+// ======================================================================================
+// VIN DECODER (SAFE BASIC)
+// ======================================================================================
+
+function decodeVIN(vin:string) {
+  if (!vin || vin.length < 10) return null;
+
+  if (vin.startsWith("SALLDH")) return { year:"2012", model:"90", engine:"2.2" };
+  if (vin.startsWith("SALLDW")) return { year:"2002", model:"110", engine:"Td5" };
+
+  return { year:"Unknown", model:"Defender", engine:"Unknown" };
+}
+
+// ======================================================================================
+// COMPONENT
+// ======================================================================================
+
+export default function Dashboard() {
+
+  const [data, setData] = useState<any>(null);
+  const [query, setQuery] = useState("");
+
+  const [vinInput, setVinInput] = useState("");
+  const [vins, setVins] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState<string | null>(null);
+
+  async function search() {
+    const res = await fetch('/api/parts?q=' + query);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(()=>{ search(); },[]);
+
+  return (
+    <div style={{background:"#e5e7eb", minHeight:"100vh", padding:"30px"}}>
+
+      {/* HEADER */}
+      <div style={{
+        background:"#111827",
+        padding:"20px",
+        borderRadius:"12px",
+        color:"#d1d5db",
+        fontSize:"26px",
+        fontWeight:800,
+        marginBottom:"25px"
+      }}>
+        JustDefenders © Command Centre
+      </div>
+
+      {/* SEARCH PANEL */}
+      <div style={{
+        background:"#ffffff",
+        padding:"20px",
+        borderRadius:"12px",
+        marginBottom:"20px"
+      }}>
+
+        {/* VIN */}
+        <input
+          placeholder="Enter VIN"
+          value={vinInput}
+          onChange={(e)=>setVinInput(e.target.value.toUpperCase())}
+        />
+
+        <button onClick={()=>{
+          if (!vinInput) return;
+          if (!vins.includes(vinInput)) setVins([...vins, vinInput]);
+          setActiveVin(vinInput);
+          setVinInput("");
+        }}>
+          Add
+        </button>
+
+        {/* VIN LIST */}
+        <div>
+          {vins.map((v,i)=>{
+            const d = decodeVIN(v);
+            return (
+              <div key={i}>
+                {v} {d?.year}, {d?.model}, {d?.engine}
+              </div>
+            );
+          })}
+        </div>
+
+        {/* SEARCH */}
+        <input value={query} onChange={(e)=>setQuery(e.target.value)} />
+        <button onClick={search}>Search</button>
+
+      </div>
+
+      {/* RESULTS */}
+      {data?.results?.map((s:any,i:number)=>(
+        <div key={i} style={{background:"#fff", padding:"10px", marginBottom:"10px"}}>
+
+          <div style={{display:"flex", alignItems:"center", gap:"8px"}}>
+            <img src={getSupplierLogo(s.supplier)} width="24" />
+            <strong>{s.supplier}</strong>
+          </div>
+
+          <div>{s.partNumber}</div>
+          <div>${s.price}</div>
+
+        </div>
+      ))}
+
+    </div>
+  );
+}

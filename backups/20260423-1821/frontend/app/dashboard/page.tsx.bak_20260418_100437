@@ -1,0 +1,257 @@
+"use client";
+
+import { useState, useEffect } from "react";
+
+export default function Dashboard() {
+
+  const [vin, setVin] = useState("");
+  const [vinList, setVinList] = useState<string[]>([]);
+  const [activeVin, setActiveVin] = useState("");
+  const [query, setQuery] = useState("");
+  const [data, setData] = useState<any>(null);
+const [userLocation, setUserLocation] = useState<{lat:number,lng:number}|null>(null);
+  const [domestic, setDomestic] = useState(false);
+  const [used, setUsed] = useState(false);
+  const [showHelp, setShowHelp] = useState(false);
+
+  function addVin() {
+    if (vin && !vinList.includes(vin)) {
+      const updated = [...vinList, vin];
+      setVinList(updated);
+      if (!activeVin) setActiveVin(vin);
+      setVin("");
+    }
+  }
+
+  async function search() {
+    const res = await fetch(`/api/parts?vin=${activeVin}&q=${query}&domestic=${domestic}&used=${used}`);
+    const json = await res.json();
+    setData(json);
+  }
+
+  useEffect(() => {
+    search();
+  }, []);
+
+useEffect(() => {
+  if (!navigator.geolocation) return;
+
+  navigator.geolocation.getCurrentPosition(
+    (pos) => {
+      setUserLocation({
+        lat: pos.coords.latitude,
+        lng: pos.coords.longitude
+      });
+    },
+    () => console.log("Location permission denied")
+  );
+}, []);
+
+
+  
+function getDistance(lat1:number, lon1:number, lat2:number, lon2:number) {
+  const R = 6371;
+  const dLat = (lat2 - lat1) * Math.PI / 180;
+  const dLon = (lon2 - lon1) * Math.PI / 180;
+
+  const a =
+    Math.sin(dLat/2) * Math.sin(dLat/2) +
+    Math.cos(lat1 * Math.PI / 180) *
+    Math.cos(lat2 * Math.PI / 180) *
+    Math.sin(dLon/2) * Math.sin(dLon/2);
+
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+  return R * c;
+}
+
+return (
+    <div style={{
+      padding:20,
+      background:"#f3f4f6",
+      minHeight:"100vh",
+      color:"#111"
+    }}>
+
+      <h1 style={{fontWeight:700}}>
+        JustDefenders ÃƒÆ’Ã†â€™ÃƒÂ¢Ã¢â€šÂ¬Ã…Â¡ÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â© Command Centre
+        <span
+          onClick={()=>setShowHelp(!showHelp)}
+          style={{
+            marginLeft:10,
+            cursor:"pointer",
+            background:"#2563eb",
+            color:"white",
+            padding:"3px 7px",
+            borderRadius:"50%"
+          }}
+        >
+          i
+        </span>
+      </h1>
+
+      {showHelp && (
+        <div style={{
+          background:"#fff",
+          padding:10,
+          marginTop:10,
+          borderRadius:8
+        }}>
+          Enter VIN, select active vehicle, search parts, and refine suppliers.
+        </div>
+      )}
+
+      {/* INPUT PANEL */}
+      <div style={{
+        background:"#fff",
+        padding:15,
+        borderRadius:10,
+        marginTop:15,
+        boxShadow:"0 4px 12px rgba(0,0,0,0.08)"
+      }}>
+
+        <input
+          placeholder="VIN"
+          value={vin}
+          onChange={(e)=>setVin(e.target.value.toUpperCase())}
+          style={{padding:6, marginRight:10}}
+        />
+
+        <button onClick={addVin} style={{
+          background:"#2563eb",
+          color:"white",
+          padding:"6px 10px",
+          borderRadius:6,
+          marginRight:10
+        }}>
+          Add VIN
+        </button>
+
+        <input
+          placeholder="PART NUMBER OR DESCRIPTION"
+          value={query}
+          onChange={(e)=>setQuery(e.target.value.toUpperCase())}
+          style={{padding:6, marginRight:10}}
+        />
+
+        <button onClick={search} style={{
+          background:"#16a34a",
+          color:"white",
+          padding:"6px 12px",
+          borderRadius:6
+        }}>
+          Search
+        </button>
+
+        <div style={{marginTop:10}}>
+          <label style={{marginRight:15}}>
+            <input type="checkbox" checked={domestic} onChange={()=>setDomestic(!domestic)} />
+            {" "}Domestic
+          </label>
+
+          <label>
+            <input type="checkbox" checked={used} onChange={()=>setUsed(!used)} />
+            {" "}Used
+          </label>
+        </div>
+
+      </div>
+
+      {/* VIN TAGS */}
+      <div style={{marginTop:10}}>
+        {vinList.map((v,i)=>(
+          <span
+            key={i}
+            onClick={()=>setActiveVin(v)}
+            style={{
+              marginRight:5,
+              padding:"4px 8px",
+              borderRadius:6,
+              cursor:"pointer",
+              background: v===activeVin ? "#16a34a" : "#e5e7eb",
+              color: v===activeVin ? "white" : "black"
+            }}
+          >
+            {v}
+            <span
+              onClick={(e)=>{
+                e.stopPropagation();
+                setVinList(vinList.filter(x=>x!==v));
+                if(activeVin===v) setActiveVin("");
+              }}
+              style={{marginLeft:6, color:"red"}}
+            >
+              ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â¢ÃƒÆ’Ã¢â‚¬Â¦ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚Â¢
+            </span>
+          </span>
+        ))}
+      </div>
+
+      {/* RESULTS */}
+      {data && (
+        <div style={{marginTop:20}}>
+
+          <div style={{fontWeight:600}}>
+            {data?.vehicle
+  ? `${data.vehicle.model} | ${data.vehicle.engine} | ${data.vehicle.year}`
+  : "No vehicle selected"}
+          </div>
+
+          {data.results.map((s:any,i:number)=>(
+            <div key={i} style={{
+              background:"#fff",
+              padding:12,
+              marginTop:10,
+              borderRadius:10,
+              boxShadow:"0 4px 10px rgba(0,0,0,0.06)"
+            }}>
+              
+<div style={{display:"flex", justifyContent:"space-between", alignItems:"center"}}>
+  <strong>{s.supplier}</strong>
+
+  {/* Supplier Type Badge */}
+  <span style={{
+    fontSize:"11px",
+    padding:"2px 6px",
+    borderRadius:"6px",
+    background: s.location ? "#d1fae5" : "#e5e7eb",
+    color:"#111"
+  }}>
+    {
+  s.type === "hybrid" ? "HYBRID" :
+  s.type === "physical" ? "PHYSICAL" :
+  "ONLINE"
+}
+  </span>
+</div>
+
+{/* Distance */}
+{userLocation && s.location && (
+  <div style={{fontSize:"12px", color:"#555"}}>
+    ÃƒÂ°Ã…Â¸Ã¢â‚¬Å“Ã‚Â {getDistance(
+      userLocation.lat,
+      userLocation.lng,
+      s.location.lat,
+      s.location.lng
+    ).toFixed(1)} km away
+  </div>
+)}
+
+              {(s.items && s.items.length > 0 ? s.items : [s]).map((it:any,j:number)=>(
+                <div key={j} style={{display:"flex", justifyContent:"space-between"}}>
+                  <span>{it.partNumber}</span>
+                  <span>
+                    ${it.totalAUD}
+                    {data.best?.supplier===s.supplier ? " ÃƒÆ’Ã†â€™Ãƒâ€šÃ‚Â°ÃƒÆ’Ã¢â‚¬Â¦Ãƒâ€šÃ‚Â¸ÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬Ãƒâ€šÃ‚ÂÃƒÆ’Ã¢â‚¬Å¡Ãƒâ€šÃ‚Â¥ BEST BUY" : ""}
+                  </span>
+                </div>
+              ))}
+
+            </div>
+          ))}
+
+        </div>
+      )}
+
+    </div>
+  );
+}

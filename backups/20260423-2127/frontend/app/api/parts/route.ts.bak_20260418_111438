@@ -1,0 +1,63 @@
+import { NextResponse } from "next/server";
+
+export async function GET(req: Request) {
+
+  const { searchParams } = new URL(req.url);
+
+  const query = searchParams.get("q") || "";
+  const vin = searchParams.get("vin") || "";
+
+  // ----------------------------------------------------------------------------------
+  // MOCK RESULTS (your existing working structure)
+  // ----------------------------------------------------------------------------------
+
+  const results = [
+    { supplier: "4WD Industries", partNumber: "LR123", price: 280 },
+    { supplier: "Landybitz", partNumber: "LR123", price: 320 },
+    { supplier: "British Auto Parts", partNumber: "LR123", price: 290 },
+    { supplier: "LR Partshop", partNumber: "LR123", price: 330 }
+  ];
+
+  // ----------------------------------------------------------------------------------
+  // SUPPLIER INTELLIGENCE (FORCED — NO DEPENDENCIES)
+  // ----------------------------------------------------------------------------------
+
+  const supplierData:any = {
+    "4WD Industries": {
+      type: "hybrid",
+      location: { lat: -32.9283, lng: 151.7817 }
+    },
+    "Landybitz": {
+      type: "hybrid",
+      location: { lat: -27.9830, lng: 153.3500 }
+    },
+    "British Auto Parts": {
+      type: "hybrid",
+      location: { lat: -37.8220, lng: 145.2720 }
+    },
+    "LR Partshop": {
+      type: "hybrid",
+      location: null
+    }
+  };
+
+  // ----------------------------------------------------------------------------------
+  // ENRICH RESULTS
+  // ----------------------------------------------------------------------------------
+
+  const enriched = results.map(r => {
+    const s = supplierData[r.supplier] || { type: "online", location: null };
+
+    return {
+      ...r,
+      type: s.type,
+      location: s.location
+    };
+  });
+
+  return NextResponse.json({
+    query,
+    vin,
+    results: enriched
+  });
+}

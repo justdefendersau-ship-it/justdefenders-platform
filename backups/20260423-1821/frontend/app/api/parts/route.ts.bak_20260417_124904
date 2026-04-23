@@ -1,0 +1,86 @@
+//
+// Timestamp: 17 April 2026 13:20
+// JustDefenders Ã‚Â©
+// File: /app/api/parts/route.ts
+//
+
+import { NextResponse } from 'next/server'
+
+export async function GET(req) {
+
+  const { searchParams } = new URL(req.url)
+
+  const query = searchParams.get('q')
+  const vin   = searchParams.get('vin')
+
+  console.log("Ã°Å¸â€Â Parts search:", query, "VIN:", vin)
+
+  // ------------------------------------------------------------------
+  // MOCK PARTS (EXISTING BEHAVIOUR PRESERVED)
+  // ------------------------------------------------------------------
+
+  let results = [
+    {
+      partNumber: "LR123",
+      supplier: "AutoParts Co",
+      price: 320,
+      deliveryDays: 3,
+      reliability: 0.8
+    },
+    {
+      partNumber: "LR123",
+      supplier: "FastParts",
+      price: 295,
+      deliveryDays: 5,
+      reliability: 0.6
+    }
+  ]
+
+  // ------------------------------------------------------------------
+  // Ã°Å¸Â§Â  INTELLIGENCE LAYER (SAFE ADD)
+  // ------------------------------------------------------------------
+
+  let intelligence = null
+
+  try {
+    if (vin) {
+      const res = await fetch(`http://localhost:8081/api/vehicle/${vin}`)
+      intelligence = await res.json()
+
+      console.log("Ã°Å¸Â§Â  Intelligence received:", intelligence.status)
+    }
+  } catch (err) {
+    console.log("Ã¢Å¡Â Ã¯Â¸Â Intelligence unavailable Ã¢â‚¬â€ fallback active")
+  }
+
+  // ------------------------------------------------------------------
+  // Ã°Å¸Â§Â  APPLY INTELLIGENCE (NON-DESTRUCTIVE)
+  // ------------------------------------------------------------------
+
+  if (intelligence && intelligence.status === "fallback_active") {
+
+    results = results.map(p => ({
+      ...p,
+      score:
+        (
+  (p.reliability * intelligence.scoring.reliability_weight) +
+  ((1 / p.price) * 100 * intelligence.scoring.price_weight) +
+  ((1 / p.deliveryDays) * 10 * intelligence.scoring.delivery_weight)
+)
+    }))
+
+    // Sort by score descending
+    results.sort((a, b) => b.score - a.score)
+  }
+
+  // ------------------------------------------------------------------
+  // RESPONSE
+  // ------------------------------------------------------------------
+
+  return NextResponse.json({
+    query,
+    vin,
+    intelligence: intelligence ? intelligence.status : "none",
+    results
+  })
+}

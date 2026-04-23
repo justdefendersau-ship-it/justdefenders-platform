@@ -1,0 +1,128 @@
+[
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Repco",
+    "price": 125,
+    "timestamp": "2026-04-05T09:33:37.683Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Britpart",
+    "price": 136,
+    "timestamp": "2026-04-05T09:33:37.715Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Britpart",
+    "price": 69,
+    "timestamp": "2026-04-05T09:33:41.687Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Britpart",
+    "price": 156,
+    "timestamp": "2026-04-05T09:33:41.719Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 73,
+    "timestamp": "2026-04-05T09:33:45.688Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Britpart",
+    "price": 151,
+    "timestamp": "2026-04-05T09:33:45.719Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Britpart",
+    "price": 124,
+    "timestamp": "2026-04-05T09:33:49.696Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 59,
+    "timestamp": "2026-04-05T09:33:49.728Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 191,
+    "timestamp": "2026-04-05T09:33:53.711Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 23,
+    "timestamp": "2026-04-05T09:33:53.730Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 149,
+    "timestamp": "2026-04-05T09:33:57.724Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "NRC9448",
+    "supplier": "Britpart",
+    "price": 21,
+    "timestamp": "2026-04-05T09:33:57.740Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 122,
+    "timestamp": "2026-04-05T09:34:01.724Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Repco",
+    "price": 214,
+    "timestamp": "2026-04-05T09:34:01.754Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "NRC9448",
+    "supplier": "Repco",
+    "price": 173,
+    "timestamp": "2026-04-05T09:34:05.735Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Britpart",
+    "price": 140,
+    "timestamp": "2026-04-05T09:34:05.768Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "ERR5009",
+    "supplier": "Repco",
+    "price": 101,
+    "timestamp": "2026-04-05T09:34:09.746Z",
+    "source": "crawler"
+  },
+  {
+    "partNumber": "LR032644",
+    "supplier": "Britpart",
+    "price": 200,
+    "timestamp": "2026-04-05T09:34:09.777Z",
+    "source": "crawler"
+  }
+]
